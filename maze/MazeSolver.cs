@@ -16,19 +16,28 @@ namespace maze
         {
             public Point StartLocation { get; set; }
             public Point FinishLocation { get; set; }
+
+            public MazeEndPoints(Point startLocation, Point finishLocation)
+            {
+                this.StartLocation = startLocation;
+                this.FinishLocation = finishLocation;
+            }
         }
 
         #region Public Methods
 
         /// <summary>
-        /// Solves the maze...
+        /// 
         /// </summary>
-        /// <param name="someInput"></param>
-        public static Bitmap SolveMaze(Bitmap image)
+        /// <param name="image"></param>
+        /// <param name="startColor"></param>
+        /// <param name="finishColor"></param>
+        /// <returns></returns>
+        public static Bitmap SolveMaze(Bitmap image, Color startColor, Color finishColor, Color wallColor)
         {
             long start = DateTime.Now.Ticks;
             // Find the start and finish endpoints
-            MazeEndPoints endPoints = FindEndPoints(image, Color.Red, Color.Blue);
+            MazeEndPoints endPoints = FindEndPoints(image, startColor, finishColor);
             long elapsedTime = DateTime.Now.Ticks - start;
             TimeSpan time = new DateTime(elapsedTime).TimeOfDay;
             return image;
@@ -47,7 +56,7 @@ namespace maze
         /// <returns>A <see cref="MazeEndPoints"/>, containing two points representing the start and finish locations.</returns>
         static MazeEndPoints FindEndPoints(Bitmap image, Color startColor, Color finishColor)
         {
-            MazeEndPoints mazeEndPoints = new MazeEndPoints();
+            MazeEndPoints mazeEndPoints = new MazeEndPoints(Point.Empty, Point.Empty);
             // Loop through entire image, pixel by pixel, searching for the given colors
             for (int imageY = 0; imageY < image.Height; imageY++)
             {
@@ -62,7 +71,7 @@ namespace maze
                     else if (currentPixelArgbValue == finishColor.ToArgb())
                         mazeEndPoints.FinishLocation = new Point(imageX, imageY);
                     // Check if done
-                    if (mazeEndPoints.StartLocation != null && mazeEndPoints.FinishLocation != null)
+                    if (mazeEndPoints.StartLocation != Point.Empty && mazeEndPoints.FinishLocation != Point.Empty)
                         return mazeEndPoints;
                 }
             }

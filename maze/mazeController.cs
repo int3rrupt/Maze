@@ -16,7 +16,10 @@ namespace maze
         /// </summary>
         public MazeController()
         {
-            //
+            // Initialize default colors
+            this.StartColor = Color.Red;
+            this.FinishColor = Color.Blue;
+            this.WallColor = Color.Black;
         }
 
         #endregion
@@ -32,13 +35,32 @@ namespace maze
         {
             using (Bitmap mazeImage = FileHelper.ReadImage(imagePath))
             {
-                using (Bitmap solutionImage = MazeSolver.SolveMaze(mazeImage))
+                using (Bitmap solutionImage = MazeSolver.SolveMaze(mazeImage, this.StartColor, this.FinishColor, this.WallColor))
                 {
                     FileHelper.WriteImage(solutionImage, solutionPath);
                 }
             }
-                return false;
+            return false;
         }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// The starting color
+        /// </summary>
+        public Color StartColor { get; set; }
+
+        /// <summary>
+        /// The finishing color
+        /// </summary>
+        public Color FinishColor { get; set; }
+
+        /// <summary>
+        /// The wall color
+        /// </summary>
+        public Color WallColor { get; set; }
 
         #endregion
     }

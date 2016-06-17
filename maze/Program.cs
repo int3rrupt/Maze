@@ -11,11 +11,15 @@ namespace maze
         static void Main(string[] args)
         {
             // DEBUG
-            args = new string[] { @"C:\Users\reyes\Downloads\maze2.png", @"C:\Users\reyes\Downloads\mazeSolution.png" };
+            args = new string[] { @"C:\Users\reyes\Downloads\maze4.png", @"C:\Users\reyes\Downloads\mazeSolution.png" };
+
+
+
+
             // Check user input
             if (args.Length != 2)
             {
-                Console.WriteLine("Expected two arguments.\nEx: maze.exe \"source.[bmp,png,jpg]\" \"destination.[bmp,png,jpg]\"");
+                Console.WriteLine($"{Resources.Error_MissingArguments}\nEx: {Resources.ArgumentsFormat}");
                 return;
             }
 
