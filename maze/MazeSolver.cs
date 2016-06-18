@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace maze
 {
@@ -36,6 +37,10 @@ namespace maze
         public static Bitmap SolveMaze(Bitmap image, Color startColor, Color finishColor, Color wallColor)
         {
             long start = DateTime.Now.Ticks;
+
+            //ReadBitmapIntoArray(image, startColor, finishColor, wallColor);
+
+
             // Find the start and finish endpoints
             MazeEndPoints endPoints = FindEndPoints(image, startColor, finishColor);
             long elapsedTime = DateTime.Now.Ticks - start;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace maze
 {
@@ -12,14 +7,11 @@ namespace maze
         #region Constructor
 
         /// <summary>
-        /// The default constructor for the MazeController class
+        /// Creates a new Maze Controller class
         /// </summary>
         public MazeController()
         {
-            // Initialize default colors
-            this.StartColor = Color.Red;
-            this.FinishColor = Color.Blue;
-            this.WallColor = Color.Black;
+            // This purpose of this constructor is to provide the XML summary
         }
 
         #endregion
@@ -35,8 +27,22 @@ namespace maze
         {
             using (Bitmap mazeImage = FileHelper.ReadImage(imagePath))
             {
+                BitmapConversionParameters bmpConvParams = new BitmapConversionParameters();
+                bmpConvParams.AddParameter(Color.Red, '@');
+                bmpConvParams.AddParameter(Color.Blue, 'X');
+                bmpConvParams.AddParameter(Color.Black, '*');
+                // Convert bitmap to Maze
+                ImageHelper.BitmapToCharArray(mazeImage, bmpConvParams);
+
+
+
+
+
                 using (Bitmap solutionImage = MazeSolver.SolveMaze(mazeImage, this.StartColor, this.FinishColor, this.WallColor))
                 {
+                    
+
+
                     FileHelper.WriteImage(solutionImage, solutionPath);
                 }
             }

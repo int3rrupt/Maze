@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 
 namespace maze
@@ -17,9 +18,9 @@ namespace maze
                 Image image = Image.FromFile(imagePath);
                 return new Bitmap(image);
             }
-            catch (FileNotFoundException ex)
+            catch (FileNotFoundException)
             {
-                throw;
+                throw new NotImplementedException();
             }
         }
 
