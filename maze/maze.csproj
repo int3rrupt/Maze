@@ -7,7 +7,7 @@
     <ProjectGuid>{CA1DEDB6-38BC-4297-B5A7-FD92C8EC3EA8}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>maze</RootNamespace>
+    <RootNamespace>Maze</RootNamespace>
     <AssemblyName>maze</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -32,6 +32,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,25 +45,38 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BitmapArray.cs" />
-    <Compile Include="BitmapConversionParameters.cs" />
-    <Compile Include="ImageHelper.cs" />
-    <Compile Include="Maze.cs" />
+    <Compile Include="Imaging\BitmapArray.cs" />
+    <Compile Include="Imaging\BitmapConversionParams.cs" />
+    <Compile Include="Imaging\BitsPerColor.cs" />
+    <Compile Include="Exceptions\ExceptionMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Graph.cs" />
+    <Compile Include="Imaging\ImageHelper.cs" />
+    <Compile Include="MazeNodeType.cs" />
+    <Compile Include="MazeImage.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="FileHelper.cs" />
     <Compile Include="MazeController.cs" />
     <Compile Include="MazeSolver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchAlgorithms.cs" />
+    <Compile Include="Exceptions\UnsupportedImageFormatException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Exceptions\ExceptionMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace maze
+namespace Maze
 {
     class Program
     {
         static void Main(string[] args)
         {
             // DEBUG
-            args = new string[] { @"C:\Users\reyes\Downloads\maze4.png", @"C:\Users\reyes\Downloads\mazeSolution.png" };
+            args = new string[] { @"C:\Users\reyes\Downloads\maze2.png", @"C:\Users\reyes\Downloads\mazeSolution.png" };
 
 
 

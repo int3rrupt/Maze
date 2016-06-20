@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Maze {
+namespace Maze.Exceptions {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Maze {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resources {
+    internal class ExceptionMessages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal ExceptionMessages() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Maze {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Maze.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Maze.Exceptions.ExceptionMessages", typeof(ExceptionMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,20 @@ namespace Maze {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to maze.exe &quot;source.[bmp,png,jpg]&quot; &quot;destination.[bmp,png,jpg]&quot;.
+        ///   Looks up a localized string similar to The file [{0}] was not found..
         /// </summary>
-        internal static string ArgumentsFormat {
+        internal static string FileNotFoundExceptionMessage {
             get {
-                return ResourceManager.GetString("ArgumentsFormat", resourceCulture);
+                return ResourceManager.GetString("FileNotFoundExceptionMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Expected two arguments..
+        ///   Looks up a localized string similar to Image [{0}] uses an unsupported format [{1}]..
         /// </summary>
-        internal static string Error_MissingArguments {
+        internal static string UnsupportedImageFormatExceptionMessage {
             get {
-                return ResourceManager.GetString("Error_MissingArguments", resourceCulture);
+                return ResourceManager.GetString("UnsupportedImageFormatExceptionMessage", resourceCulture);
             }
         }
     }

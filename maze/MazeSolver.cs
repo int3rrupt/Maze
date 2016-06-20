@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace maze
+namespace Maze
 {
     /// <summary>
     /// A maze solving class.
@@ -34,18 +34,9 @@ namespace maze
         /// <param name="startColor"></param>
         /// <param name="finishColor"></param>
         /// <returns></returns>
-        public static Bitmap SolveMaze(Bitmap image, Color startColor, Color finishColor, Color wallColor)
+        public static void SolveMaze(Graph graph)
         {
-            long start = DateTime.Now.Ticks;
-
-            //ReadBitmapIntoArray(image, startColor, finishColor, wallColor);
-
-
-            // Find the start and finish endpoints
-            MazeEndPoints endPoints = FindEndPoints(image, startColor, finishColor);
-            long elapsedTime = DateTime.Now.Ticks - start;
-            TimeSpan time = new DateTime(elapsedTime).TimeOfDay;
-            return image;
+            SearchAlgorithms.AStar(graph);
         }
 
         #endregion
