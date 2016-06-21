@@ -60,7 +60,7 @@
     <Compile Include="MazeImage.cs" />
     <Compile Include="NodeType.cs" />
     <Compile Include="PriorityQueue.cs" />
-    <Compile Include="PriorityQueueNode.cs" />
+    <Compile Include="Node.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
