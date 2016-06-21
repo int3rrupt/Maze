@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryHeap.cs" />
     <Compile Include="Imaging\BitmapArray.cs" />
     <Compile Include="Imaging\BitmapConversionParams.cs" />
     <Compile Include="Imaging\BitsPerColor.cs" />
@@ -57,6 +58,9 @@
     <Compile Include="Imaging\ImageHelper.cs" />
     <Compile Include="MazeNodeType.cs" />
     <Compile Include="MazeImage.cs" />
+    <Compile Include="NodeType.cs" />
+    <Compile Include="PriorityQueue.cs" />
+    <Compile Include="PriorityQueueNode.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
