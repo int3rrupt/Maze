@@ -192,7 +192,58 @@ namespace Maze
             
             PriorityQueueNode node = Head;
             // Compare node priorities
-            //while (node.Priority > node.LeftChild.Priority || node.Priority > node.RightChild.Priority)
+            while ((node.LeftChild != null && node.Priority > node.LeftChild.Priority) || (node.RightChild != null && node.Priority > node.RightChild.Priority))
+            {
+                // Switch x and y
+                PriorityQueueNode x = node;
+                PriorityQueueNode y;
+                // Determine which child node to switch with, use smaller of the two
+                if (node.RightChild == null || (node.LeftChild != null && node.LeftChild.Priority < node.RightChild.Priority))
+                    y = node.LeftChild;
+                else
+                    y = node.RightChild;
+                PriorityQueueNode xLeftChild = x.LeftChild;
+                PriorityQueueNode xRightChild = x.RightChild;
+                PriorityQueueNode yLeftChild = y.LeftChild;
+                PriorityQueueNode yRightChild = y.RightChild;
+                PriorityQueueNode xParent = x.Parent;
+
+                // Update y children
+                if (yLeftChild != null)
+                    yLeftChild.Parent = x;
+                if (yRightChild != null)
+                    yRightChild.Parent = x;
+                // Update x
+                x.LeftChild = yLeftChild;
+                x.RightChild = yRightChild;
+                x.Parent = y;
+                // Update y
+                if (y == xLeftChild)
+                {
+                    y.LeftChild = x;
+                    y.RightChild = xRightChild;
+                }
+                else
+                {
+                    y.LeftChild = xLeftChild;
+                    y.RightChild = x;
+                }
+                y.Parent = xParent;
+                // Update original x parent
+                if (xParent != null)
+                {
+                    if (x == xParent.LeftChild)
+                        xParent.LeftChild = y;
+                    else
+                        xParent.RightChild = y;
+                }
+
+                // Check if switching tail
+                if (y == Tail)
+                    Tail = x;
+                if (x == Head)
+                    Head = y;
+            }
         }
 
         private void ReplaceHeadWithTail()
