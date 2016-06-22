@@ -259,25 +259,29 @@ namespace Maze
             else
             {
                 // Have Tail Inherit Head's children
-                Tail.LeftChild = Head.LeftChild;
-                Tail.RightChild = Head.RightChild;
+                if (Head.LeftChild != Tail)
+                    Tail.LeftChild = Head.LeftChild;
+                if (Head.RightChild != Tail)
+                    Tail.RightChild = Head.RightChild;
                 // Done with current Head replace make current Tail the new Head
                 Head = Tail;
                 // Update inherited children's parent
-                Head.LeftChild.Parent = Head;
-                Head.RightChild.Parent = Head;
+                if (Head.LeftChild != null)
+                    Head.LeftChild.Parent = Head;
+                if (Head.RightChild != null)
+                    Head.RightChild.Parent = Head;
                 // Remove new Head's parent
                 Head.Parent = null;
                 // Set new Tail
-                if (tailNodeType == NodeType.RightChild)
-                {
-                    Tail.Parent.RightChild = null;
-                    Tail = Tail.Parent.LeftChild;
-                }
-                else // Tail is left child
+                if (tailNodeType == NodeType.LeftChild)
                 {
                     Tail.Parent.LeftChild = null;
                     Tail = GetNextRightMostNode(Head.Parent);
+                }
+                else // Tail is right child
+                {
+                    Tail.Parent.RightChild = null;
+                    Tail = Tail.Parent.LeftChild;
                 }
             }
             // Update Count
