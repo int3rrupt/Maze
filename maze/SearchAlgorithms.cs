@@ -10,15 +10,21 @@ namespace Maze
     {
         public static void AStar(Graph graph)
         {
-            List<int> open = new List<int>();
-            List<int> closed = new List<int>();
+            BinaryHeap<int, int> open = new BinaryHeap<int, int>();
+            BinaryHeap<int, int> closed = new BinaryHeap<int, int>();
 
-            open.Add(graph.StartId);
+            open.Insert(F(graph.StartId), graph.StartId);
 
+            Node<int, int> currentNode = open.Extract();
             // Check for finish
-            while (open.Count != 0 && open[0] != graph.FinishId)
+            while (open.Count != 0 && (currentNode = open.Extract()).Value != graph.FinishId)
             {
-                //currentNode = open.Re
+                closed.Insert(currentNode);
+
+                foreach (int id in graph.GetNeighbors(currentNode.Value))
+                {
+                    //
+                }
             }
 
 

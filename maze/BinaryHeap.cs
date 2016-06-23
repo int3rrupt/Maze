@@ -34,7 +34,14 @@ namespace Maze
             Node<KeyT, ValueT> head = Head;
             ReplaceHeadWithTail();
             PercolateDown();
+            return head;
+        }
 
+        public Node<KeyT, ValueT> Extract(ValueT value)
+        {
+            Node<KeyT, ValueT> head = Head;
+            ReplaceHeadWithTail();
+            PercolateDown();
             return head;
         }
 
@@ -80,7 +87,7 @@ namespace Maze
                     else // Tail.Parent is Right Child
                     {
                         // Find the closest parent of node where parent is a left child or root
-                        Node<KeyT, ValueT> leftChildParent = GetClosestParentAsLeftChild(Tail);
+                        Node<KeyT, ValueT> leftChildParent = GetClosestParentAs(NodeType.LeftChild, Tail);
                         // If parent is the top of heap set node to leftmost child
                         if (leftChildParent == Head)
                             node.Parent = GetLeftMostChild(leftChildParent);
@@ -100,19 +107,19 @@ namespace Maze
         {
             if (node == Head)
                 return NodeType.Head;
-            if (node.Parent.LeftChild == node)
+            if (node.Parent != null && node.Parent.LeftChild == node)
                 return NodeType.LeftChild;
             return NodeType.RightChild;
         }
 
-        private Node<KeyT, ValueT> GetClosestParentAsLeftChild(Node<KeyT, ValueT> node)
+        private Node<KeyT, ValueT> GetClosestParentAs(NodeType nodeType, Node<KeyT, ValueT> node)
         {
             Node<KeyT, ValueT> currentNode = node.Parent;
             // Search for next parent
             while (currentNode != Head)
             {
-                // Check if current node parent is a left child
-                if (GetNodeParentRelation(currentNode) == NodeType.LeftChild)
+                // Check if current node parent is of desired node type
+                if (GetNodeParentRelation(currentNode) == nodeType)
                     // TODO: Clean up logic if possible
                     return currentNode;
                 // Update current node to current node's parent and continue search
@@ -128,6 +135,17 @@ namespace Maze
             while (currentNode.LeftChild != null)
             {
                 currentNode = currentNode.LeftChild;
+            }
+            return currentNode;
+        }
+
+        private Node<KeyT, ValueT> GetRightMostChild(Node<KeyT, ValueT> node)
+        {
+            Node<KeyT, ValueT> currentNode = node;
+            // Search for leftmost child
+            while (currentNode.RightChild != null)
+            {
+                currentNode = currentNode.RightChild;
             }
             return currentNode;
         }
@@ -151,6 +169,11 @@ namespace Maze
                 y.LeftChild = xLeftChild;
                 y.RightChild = xRightChild;
                 y.Parent = x;
+                // Update y children
+                if (x != yLeftChild)
+                    yLeftChild.Parent = x;
+                else if (yRightChild != null)
+                    yRightChild.Parent = x;
                 // Update x children
                 if (xLeftChild != null)
                     xLeftChild.Parent = y;
@@ -204,19 +227,15 @@ namespace Maze
                         y = node.RightChild;
                     Node<KeyT, ValueT> xLeftChild = x.LeftChild;
                     Node<KeyT, ValueT> xRightChild = x.RightChild;
+                    Node<KeyT, ValueT> xParent = x.Parent;
                     Node<KeyT, ValueT> yLeftChild = y.LeftChild;
                     Node<KeyT, ValueT> yRightChild = y.RightChild;
-                    Node<KeyT, ValueT> xParent = x.Parent;
 
                     // Update y children
                     if (yLeftChild != null)
                         yLeftChild.Parent = x;
                     if (yRightChild != null)
                         yRightChild.Parent = x;
-                    // Update x
-                    x.LeftChild = yLeftChild;
-                    x.RightChild = yRightChild;
-                    x.Parent = y;
                     // Update y
                     if (y == xLeftChild)
                     {
@@ -229,6 +248,16 @@ namespace Maze
                         y.RightChild = x;
                     }
                     y.Parent = xParent;
+                    // Update x
+                    x.LeftChild = yLeftChild;
+                    x.RightChild = yRightChild;
+                    x.Parent = y;
+                    // Update x children
+                    if (xLeftChild != y)
+                        xLeftChild.Parent = y;
+                    else if(xRightChild != null)
+                        xRightChild.Parent = y;
+                    
                     // Update original x parent
                     if (xParent != null)
                     {
@@ -258,59 +287,70 @@ namespace Maze
             }
             else
             {
+                // Determine new Tail
+                Node<KeyT, ValueT> newTail = GetNodeNextToTail();
                 // Have Tail Inherit Head's children
                 if (Head.LeftChild != Tail)
                     Tail.LeftChild = Head.LeftChild;
                 if (Head.RightChild != Tail)
                     Tail.RightChild = Head.RightChild;
-                // Done with current Head replace make current Tail the new Head
-                Head = Tail;
                 // Update inherited children's parent
-                if (Head.LeftChild != null)
-                    Head.LeftChild.Parent = Head;
-                if (Head.RightChild != null)
-                    Head.RightChild.Parent = Head;
+                if (Tail.LeftChild != null)
+                    Tail.LeftChild.Parent = Tail;
+                if (Tail.RightChild != null)
+                    Tail.RightChild.Parent = Tail;
+                // Remove Tail from parent
+                if (tailNodeType == NodeType.LeftChild)
+                    Tail.Parent.LeftChild = null;
+                else // Tail is right child
+                    Tail.Parent.RightChild = null;
+                // Done with current Head, make current Tail the new Head
+                Head = Tail;
+                // Update Tail
+                Tail = newTail;
                 // Remove new Head's parent
                 Head.Parent = null;
-                // Set new Tail
-                if (tailNodeType == NodeType.LeftChild)
-                {
-                    Tail.Parent.LeftChild = null;
-                    Tail = GetNextRightMostNode(Head.Parent);
-                }
-                else // Tail is right child
-                {
-                    Tail.Parent.RightChild = null;
-                    Tail = Tail.Parent.LeftChild;
-                }
             }
             // Update Count
             Count--;
         }
 
-        private Node<KeyT, ValueT> GetNextRightMostNode(Node<KeyT, ValueT> node)
+        private Node<KeyT, ValueT> GetNodeNextToTail()
         {
-            bool foundParent = false;
-            Node<KeyT, ValueT> currentNode = node.Parent;
-            // Search for next parent where parent.LeftChild is not current branch
-            while (currentNode != Head && !foundParent)
+            Node<KeyT, ValueT> node = null;
+            // Get Tail node type
+            NodeType currentNodeType = GetNodeParentRelation(Tail);
+            if (currentNodeType != NodeType.Head)
             {
-                // Check if current Node's parent's left child is current node
-                if (currentNode.Parent.LeftChild != currentNode)
-                    foundParent = true;
-                // Update current node to current node's parent
-                currentNode = currentNode.Parent;
-            }
-            // Jump to the left branch
-            currentNode = currentNode.LeftChild;
-            // Get rightmost node starting at current node
-            while (currentNode.RightChild != null)
-            {
-                currentNode = currentNode.RightChild;
+                if (currentNodeType == NodeType.RightChild)
+                    node = Tail.Parent.LeftChild;
+                else // Tail is left child
+                {
+                    // Determine node type of Tail's Parent
+                    currentNodeType = GetNodeParentRelation(Tail.Parent);
+                    if (currentNodeType == NodeType.Head)
+                        node = Tail;
+                    else if (currentNodeType == NodeType.RightChild)
+                        node = Tail.Parent.Parent.LeftChild.RightChild;
+                    else // Tail.Parent is left child
+                    {
+                        Node<KeyT, ValueT> rightChildParent = GetClosestParentAs(NodeType.RightChild, Tail);
+                        // If parent is the top of heap set node to rightmost child
+                        if (rightChildParent == Head)
+                            node = GetRightMostChild(rightChildParent);
+                        else // Parent is not top of heap
+                            node = GetRightMostChild(rightChildParent.Parent.LeftChild);
+                    }
+                }
             }
 
-            return currentNode;
+            return node;
         }
+
+        //private Node<KeyT, ValueT> FindValue(ValueT value)
+        //{
+        //    head
+        //}
 
         #endregion
 
