@@ -10,12 +10,12 @@ namespace Maze
     {
         public static void AStar(Graph graph)
         {
-            BinaryHeap<int, int> open = new BinaryHeap<int, int>();
-            BinaryHeap<int, int> closed = new BinaryHeap<int, int>();
+            OldBinaryHeap<int, int> open = new OldBinaryHeap<int, int>();
+            OldBinaryHeap<int, int> closed = new OldBinaryHeap<int, int>();
 
-            open.Insert(F(graph.StartId), graph.StartId);
+            //open.Insert(F(graph.StartId), graph.StartId);
 
-            Node<int, int> currentNode = open.Extract();
+            OldNode<int, int> currentNode = open.Extract();
             // Check for finish
             while (open.Count != 0 && (currentNode = open.Extract()).Value != graph.FinishId)
             {

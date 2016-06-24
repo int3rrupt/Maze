@@ -54,9 +54,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\maze\maze.csproj">
+    <ProjectReference Include="..\maze\Maze.csproj">
       <Project>{ca1dedb6-38bc-4297-b5a7-fd92c8ec3ea8}</Project>
-      <Name>maze</Name>
+      <Name>Maze</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

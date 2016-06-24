@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AStarNode.cs" />
+    <Compile Include="OldBinaryHeap.cs" />
     <Compile Include="BinaryHeap.cs" />
     <Compile Include="Imaging\BitmapArray.cs" />
     <Compile Include="Imaging\BitmapConversionParams.cs" />
@@ -58,9 +60,10 @@
     <Compile Include="Imaging\ImageHelper.cs" />
     <Compile Include="MazeNodeType.cs" />
     <Compile Include="MazeImage.cs" />
+    <Compile Include="INode.cs" />
     <Compile Include="NodeType.cs" />
     <Compile Include="PriorityQueue.cs" />
-    <Compile Include="Node.cs" />
+    <Compile Include="OldNode.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

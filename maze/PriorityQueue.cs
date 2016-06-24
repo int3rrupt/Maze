@@ -1,46 +1,70 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataStructures;
+using System;
 
 namespace Maze
 {
-    public class PriorityQueue<T>
+    public class PriorityQueue<T> : BinaryHeap<T> where T: IComparable
     {
-        #region Constructors
+        public PriorityQueue()
+            : base()
+        {
+        }
 
-        public PriorityQueue() { }
+        #region Public Methods
+
+        #region Standard Operations
+
+        /// <summary>
+        /// Enqueues the given node based on the given priority.
+        /// </summary>
+        /// <param name="node">An <see cref="AStarNode{T}"/>, the item to enqueue.</param>
+        public void Enqueue(AStarNode<T> node)
+        {
+            Insert(node);
+        }
+
+        /// <summary>
+        /// Dequeues the node with the highest priority (lowest value).
+        /// </summary>
+        /// <returns>An <see cref="AStarNode{T}"/>, the node with the highest priority.</returns>
+        public AStarNode<T> DequeueHighestPriority()
+        {
+            return (AStarNode<T>)ExtractRoot();
+        }
 
         #endregion
 
-        /// <summary>
-        /// Enqueues the given item based on the given priority.
-        /// </summary>
-        /// <param name="item">A <see cref="T"/>, the item to enqueue.</param>
-        /// <param name="priority">An <see cref="int"/>, the priority to assign the given value.</param>
-        public void Enqueue(T item, int priority)
-        {
-            throw new NotImplementedException();
-        }
+        #region Additional Operations
 
         /// <summary>
-        /// Dequeues the given item.
+        /// Dequeues the node with the given key.
         /// </summary>
-        /// <param name="value">A <see cref="T"/>, the item to dequeue.</param>
+        /// <param name="key">A <see cref="T"/>, the item to dequeue.</param>
         /// <returns>A <see cref="T"/>, the item requested.</returns>
-        public T Dequeue(T value)
+        public AStarNode<T> Dequeue(T key)
         {
-            throw new NotImplementedException();
+            int index = heap.FindIndex(n => n.Key.CompareTo(key) == 0);
+            AStarNode<T> node = (AStarNode<T>)heap[index];
+            Replace(index);
+            PercolateDown(index);
+            // Determine whether value exists
+            //AStarNode<T> node = Exists(key);
+            // Remove from heap
+            // heap.Remove(node);
+            return node;
         }
 
-        /// <summary>
-        /// Dequeues the 
-        /// </summary>
-        /// <returns></returns>
-        public T DequeueLowestPriority()
+        #endregion
+
+        #endregion
+
+        #region Private Methods
+
+        private AStarNode<T> Exists(T key)
         {
-            throw new NotImplementedException();
+            return (AStarNode<T>)heap.Find(n => n.Key.CompareTo(key) == 0);
         }
+        
+        #endregion
     }
 }

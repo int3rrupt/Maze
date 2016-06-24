@@ -1,369 +1,195 @@
-﻿using System;
+﻿using DataStructures.Interfaces;
+using System;
+using System.Collections.Generic;
 
-namespace Maze
+namespace DataStructures
 {
-    public class BinaryHeap<KeyT, ValueT> where KeyT: IComparable
+    /// <summary>
+    /// A Generic Binary Min Heap Class.
+    /// </summary>
+    /// <typeparam name="T">A <see cref="T"/>, the type used for keys and values.</typeparam>
+    public class BinaryHeap<T> where T: IComparable
     {
-        #region Constructor
+        #region Declarations
 
+        /// <summary>
+        /// The <see cref="List{T}"/> used to represent the heap.
+        /// </summary>
+        protected List<INode<T>> heap;
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{T}"/> class.
+        /// </summary>
         public BinaryHeap()
         {
-            Count = 0;
+            heap = new List<INode<T>>();
         }
 
         #endregion
 
         #region Public Methods
 
-        public void Insert(KeyT key, ValueT value)
+        /// <summary>
+        /// Inserts the given node into the heap.
+        /// </summary>
+        /// <param name="node">A <see cref="INode{T}"/>, the node to be added to the heap.</param>
+        public void Insert(INode<T> node)
         {
-            Node<KeyT, ValueT> node = new Node<KeyT, ValueT>(key, value);
-            Insert(node);
-        }
-
-        public void Insert(Node<KeyT, ValueT> node)
-        {
-            // Otherwise Add to bottom of heap
-            AddToBottom(node);
-            // Re-order heap
+            // Append to end of heap
+            heap.Add(node);
+            // Percolate new value up
             PercolateUp();
         }
 
-        public Node<KeyT, ValueT> Extract()
+        /// <summary>
+        /// Extracts the <see cref="INode{T}"/> with the lowest Value.
+        /// </summary>
+        /// <returns>A <see cref="INode{T}"/>, the node with the lowest value.</returns>
+        public INode<T> ExtractRoot()
         {
-            Node<KeyT, ValueT> head = Head;
-            ReplaceHeadWithTail();
-            PercolateDown();
-            return head;
-        }
-
-        public Node<KeyT, ValueT> Extract(ValueT value)
-        {
-            Node<KeyT, ValueT> head = Head;
-            ReplaceHeadWithTail();
-            PercolateDown();
-            return head;
+            INode<T> minValue = null;
+            // Check for empty heap
+            if (heap.Count > 0)
+            {
+                // Store min value before removing
+                minValue = heap[0];
+                // Replace the root with last item in heap
+                Replace(0);
+                // Percolate new root downward to satisfy heap property
+                PercolateDown(0);
+            }
+            return minValue;
         }
 
         #endregion
 
-        #region PrivateMethods
+        #region Private Methods
 
-        private void AddToBottom(Node<KeyT, ValueT> node)
+        /// <summary>
+        /// Percolates the last item in the heap upward until the heap property is satisfied.
+        /// </summary>
+        protected void PercolateUp()
         {
-            // *NOTES:
-            // TODO: Add explanation
-
-            if (Count == 0)
-                Head = node;
-            else
+            // Grab last item in heap
+            int currentIndex = heap.Count - 1;
+            int parentIndex = IndexOfParentFor(currentIndex);
+            // While current value is less than its parent value
+            while (parentIndex > -1 && heap[currentIndex].Value.CompareTo(heap[parentIndex].Value) < 0)
             {
-                // Determine whether Tail is a left or right child
-                NodeType currentNodeType = GetNodeParentRelation(Tail);
-                if (currentNodeType == NodeType.Head)
-                {
-                    node.Parent = Head;
-                    node.Parent.LeftChild = node;
-                }
-                else if (currentNodeType == NodeType.LeftChild)
-                {
-                    node.Parent = Tail.Parent;
-                    node.Parent.RightChild = node;
-                }
-                else // Tail is Right Child
-                {
-                    // Determine whether Tail.Parent is a left or right child
-                    currentNodeType = GetNodeParentRelation(Tail.Parent);
-                    if (currentNodeType == NodeType.Head)
-                    {
-                        node.Parent = Head.LeftChild;
-                        node.Parent.LeftChild = node;
-                    }
-                    else if (currentNodeType == NodeType.LeftChild)
-                    {
-                        node.Parent = Tail.Parent.Parent.RightChild;
-                        node.Parent.LeftChild = node;
-                    }
-                    else // Tail.Parent is Right Child
-                    {
-                        // Find the closest parent of node where parent is a left child or root
-                        Node<KeyT, ValueT> leftChildParent = GetClosestParentAs(NodeType.LeftChild, Tail);
-                        // If parent is the top of heap set node to leftmost child
-                        if (leftChildParent == Head)
-                            node.Parent = GetLeftMostChild(leftChildParent);
-                        else // Parent is not top of heap
-                            node.Parent = GetLeftMostChild(leftChildParent.Parent.RightChild);
-                        node.Parent.LeftChild = node;
-                    }
-                }
+                // Swap current with its parent
+                INode<T> currentItem = heap[currentIndex];
+                heap[currentIndex] = heap[parentIndex];
+                heap[parentIndex] = currentItem;
+                // Update indexes
+                currentIndex = parentIndex;
+                parentIndex = IndexOfParentFor(currentIndex);
             }
-            // Update Tail
-            Tail = node;
-            // Update Count
-            Count++;
         }
 
-        private NodeType GetNodeParentRelation(Node<KeyT, ValueT> node)
+        /// <summary>
+        /// Percolates the node at the given index in the heap downward until the heap property is satisfied.
+        /// </summary>
+        protected void PercolateDown(int index)
         {
-            if (node == Head)
-                return NodeType.Head;
-            if (node.Parent != null && node.Parent.LeftChild == node)
-                return NodeType.LeftChild;
-            return NodeType.RightChild;
-        }
-
-        private Node<KeyT, ValueT> GetClosestParentAs(NodeType nodeType, Node<KeyT, ValueT> node)
-        {
-            Node<KeyT, ValueT> currentNode = node.Parent;
-            // Search for next parent
-            while (currentNode != Head)
+            // Set current index as root
+            int currentIndex = index;
+            int leftChildIndex = IndexOfLeftChildFor(currentIndex);
+            int rightChildIndex = IndexOfRightChildFor(currentIndex);
+            // While current value is greater than any of its child values
+            while ((leftChildIndex > 0 && heap[currentIndex].Value.CompareTo(heap[leftChildIndex].Value) > 0) ||
+                   (rightChildIndex > 0 && heap[currentIndex].Value.CompareTo(heap[rightChildIndex].Value) > 0))
             {
-                // Check if current node parent is of desired node type
-                if (GetNodeParentRelation(currentNode) == nodeType)
-                    // TODO: Clean up logic if possible
-                    return currentNode;
-                // Update current node to current node's parent and continue search
-                currentNode = currentNode.Parent;
-            }
-            return currentNode;
-        }
-
-        private Node<KeyT, ValueT> GetLeftMostChild(Node<KeyT, ValueT> node)
-        {
-            Node<KeyT, ValueT> currentNode = node;
-            // Search for leftmost child
-            while (currentNode.LeftChild != null)
-            {
-                currentNode = currentNode.LeftChild;
-            }
-            return currentNode;
-        }
-
-        private Node<KeyT, ValueT> GetRightMostChild(Node<KeyT, ValueT> node)
-        {
-            Node<KeyT, ValueT> currentNode = node;
-            // Search for leftmost child
-            while (currentNode.RightChild != null)
-            {
-                currentNode = currentNode.RightChild;
-            }
-            return currentNode;
-        }
-
-        private void PercolateUp()
-        {
-            Node<KeyT, ValueT> node = Tail;
-            // Compare node priorities
-            while (node != Head && node.Key.CompareTo(node.Parent.Key) < 0)
-            {
-                // Switch x and y
-                Node<KeyT, ValueT> x = node;
-                Node<KeyT, ValueT> y = node.Parent;
-                Node<KeyT, ValueT> xLeftChild = x.LeftChild;
-                Node<KeyT, ValueT> xRightChild = x.RightChild;
-                Node<KeyT, ValueT> yLeftChild = y.LeftChild;
-                Node<KeyT, ValueT> yRightChild = y.RightChild;
-                Node<KeyT, ValueT> yParent = y.Parent;
-                
-                // Update y
-                y.LeftChild = xLeftChild;
-                y.RightChild = xRightChild;
-                y.Parent = x;
-                // Update y children
-                if (x != yLeftChild)
-                    yLeftChild.Parent = x;
-                else if (yRightChild != null)
-                    yRightChild.Parent = x;
-                // Update x children
-                if (xLeftChild != null)
-                    xLeftChild.Parent = y;
-                if (xRightChild != null)
-                    xRightChild.Parent = y;
-                // Update x
-                if (x == yLeftChild)
+                INode<T> currentItem = heap[currentIndex];
+                // Swap current with its lowest valued child
+                if (rightChildIndex < 1 || heap[leftChildIndex].Value.CompareTo(heap[rightChildIndex].Value) < 0)
                 {
-                    x.LeftChild = y;
-                    x.RightChild = yRightChild;
+                    heap[currentIndex] = heap[leftChildIndex];
+                    heap[leftChildIndex] = currentItem;
+                    // Update current index
+                    currentIndex = leftChildIndex;
                 }
                 else
                 {
-                    x.LeftChild = yLeftChild;
-                    x.RightChild = y;
+                    heap[currentIndex] = heap[rightChildIndex];
+                    heap[rightChildIndex] = currentItem;
+                    // Update current index
+                    currentIndex = rightChildIndex;
                 }
-                x.Parent = yParent;
-                // Update original y parent
-                if (yParent != null)
-                {
-                    if (y == yParent.LeftChild)
-                        yParent.LeftChild = x;
-                    else
-                        yParent.RightChild = x;
-                }
-
-                // Check if switching tail
-                if (x == Tail)
-                    Tail = y;
-                if (y == Head)
-                    Head = x;
+                // Update child indexes
+                leftChildIndex = IndexOfLeftChildFor(currentIndex);
+                rightChildIndex = IndexOfRightChildFor(currentIndex);
             }
         }
 
-        private void PercolateDown()
+        /// <summary>
+        /// Replaces the node at the given index of the heap with the last item in the heap.
+        /// </summary>
+        protected void Replace(int index)
         {
-            if (Count > 0)
-            {
-                Node<KeyT, ValueT> node = Head;
-                // Compare node priorities
-                // While current node key is greater
-                while ((node.LeftChild != null && node.Key.CompareTo(node.LeftChild.Key) > 0 || (node.RightChild != null && node.Key.CompareTo(node.RightChild.Key) > 0)))
-                {
-                    // Switch x and y
-                    Node<KeyT, ValueT> x = node;
-                    Node<KeyT, ValueT> y;
-                    // Determine which child node to switch with, use smaller of the two
-                    if (node.RightChild == null || (node.LeftChild != null && node.LeftChild.Key.CompareTo(node.RightChild.Key) < 0))
-                        y = node.LeftChild;
-                    else
-                        y = node.RightChild;
-                    Node<KeyT, ValueT> xLeftChild = x.LeftChild;
-                    Node<KeyT, ValueT> xRightChild = x.RightChild;
-                    Node<KeyT, ValueT> xParent = x.Parent;
-                    Node<KeyT, ValueT> yLeftChild = y.LeftChild;
-                    Node<KeyT, ValueT> yRightChild = y.RightChild;
-
-                    // Update y children
-                    if (yLeftChild != null)
-                        yLeftChild.Parent = x;
-                    if (yRightChild != null)
-                        yRightChild.Parent = x;
-                    // Update y
-                    if (y == xLeftChild)
-                    {
-                        y.LeftChild = x;
-                        y.RightChild = xRightChild;
-                    }
-                    else
-                    {
-                        y.LeftChild = xLeftChild;
-                        y.RightChild = x;
-                    }
-                    y.Parent = xParent;
-                    // Update x
-                    x.LeftChild = yLeftChild;
-                    x.RightChild = yRightChild;
-                    x.Parent = y;
-                    // Update x children
-                    if (xLeftChild != y)
-                        xLeftChild.Parent = y;
-                    else if(xRightChild != null)
-                        xRightChild.Parent = y;
-                    
-                    // Update original x parent
-                    if (xParent != null)
-                    {
-                        if (x == xParent.LeftChild)
-                            xParent.LeftChild = y;
-                        else
-                            xParent.RightChild = y;
-                    }
-
-                    // Check if switching tail
-                    if (y == Tail)
-                        Tail = x;
-                    if (x == Head)
-                        Head = y;
-                }
-            }
+            // Get last item
+            INode<T> lastItem = heap[heap.Count - 1];
+            // Write last item to given index
+            heap[index] = lastItem;
+            // Remove last item
+            heap.RemoveAt(heap.Count - 1);
         }
 
-        private void ReplaceHeadWithTail()
+        /// <summary>
+        /// Determines the index of the left child for the parent at the given index.
+        /// </summary>
+        /// <param name="parentIndex">An <see cref="int"/>, the parent's index used to find the index of its left child.</param>
+        /// <returns>An <see cref="int"/>, the index of the given parent's left child. Returns -1 when no left child exists for the given parent index.</returns>
+        protected int IndexOfLeftChildFor(int parentIndex)
         {
-            // Determine whether Tail is the head, a left child, or right child
-            NodeType tailNodeType = GetNodeParentRelation(Tail);
-            if (tailNodeType == NodeType.Head)
-            {
-                Head = null;
-                Tail = null;
-            }
+            // Find potential left child index
+            int index = (2 * parentIndex) + 1;
+            // Verify index not greater than size of heap
+            if (index >= heap.Count)
+                index = -1;
+            return index;
+        }
+
+        /// <summary>
+        /// Determines the index of the right child for the parent at the given index.
+        /// </summary>
+        /// <param name="parentIndex">An <see cref="int"/>, the parent's index used to find the index of its right child.</param>
+        /// <returns>An <see cref="int"/>, the index of the given parent's right child. Returns -1 when no right child exists for the given parent index.</returns>
+        protected int IndexOfRightChildFor(int parentIndex)
+        {
+            int index;
+            // Find left child index
+            int leftChildIndex = IndexOfLeftChildFor(parentIndex);
+            // Verify left child exists and that right child index not greater than size of heap
+            if (leftChildIndex < 1 || leftChildIndex + 1 >= heap.Count)
+                index = -1;
             else
-            {
-                // Determine new Tail
-                Node<KeyT, ValueT> newTail = GetNodeNextToTail();
-                // Have Tail Inherit Head's children
-                if (Head.LeftChild != Tail)
-                    Tail.LeftChild = Head.LeftChild;
-                if (Head.RightChild != Tail)
-                    Tail.RightChild = Head.RightChild;
-                // Update inherited children's parent
-                if (Tail.LeftChild != null)
-                    Tail.LeftChild.Parent = Tail;
-                if (Tail.RightChild != null)
-                    Tail.RightChild.Parent = Tail;
-                // Remove Tail from parent
-                if (tailNodeType == NodeType.LeftChild)
-                    Tail.Parent.LeftChild = null;
-                else // Tail is right child
-                    Tail.Parent.RightChild = null;
-                // Done with current Head, make current Tail the new Head
-                Head = Tail;
-                // Update Tail
-                Tail = newTail;
-                // Remove new Head's parent
-                Head.Parent = null;
-            }
-            // Update Count
-            Count--;
+                index = leftChildIndex + 1;
+            return index;
         }
 
-        private Node<KeyT, ValueT> GetNodeNextToTail()
+        /// <summary>
+        /// Determines the index of the parent for the child at the given index.
+        /// </summary>
+        /// <param name="childIndex">An <see cref="int"/>, the index of the child who's parent is to be found.</param>
+        /// <returns>An <see cref="int"/>, the index of the parent to the child at the given index. Returns -1 when no parent exists for the given child index.</returns>
+        protected int IndexOfParentFor(int childIndex)
         {
-            Node<KeyT, ValueT> node = null;
-            // Get Tail node type
-            NodeType currentNodeType = GetNodeParentRelation(Tail);
-            if (currentNodeType != NodeType.Head)
-            {
-                if (currentNodeType == NodeType.RightChild)
-                    node = Tail.Parent.LeftChild;
-                else // Tail is left child
-                {
-                    // Determine node type of Tail's Parent
-                    currentNodeType = GetNodeParentRelation(Tail.Parent);
-                    if (currentNodeType == NodeType.Head)
-                        node = Tail;
-                    else if (currentNodeType == NodeType.RightChild)
-                        node = Tail.Parent.Parent.LeftChild.RightChild;
-                    else // Tail.Parent is left child
-                    {
-                        Node<KeyT, ValueT> rightChildParent = GetClosestParentAs(NodeType.RightChild, Tail);
-                        // If parent is the top of heap set node to rightmost child
-                        if (rightChildParent == Head)
-                            node = GetRightMostChild(rightChildParent);
-                        else // Parent is not top of heap
-                            node = GetRightMostChild(rightChildParent.Parent.LeftChild);
-                    }
-                }
-            }
-
-            return node;
+            int index;
+            // Verify given child index isn't root of heap
+            if (childIndex == 0)
+                index = -1;
+            else
+                // Need to get left child, subtract 1, and divide by 2 to obtain parent.
+                // childIndex % 2 determines odd/even. When odd index is left child, when even is right child.
+                // % 2 equals 1 when odd and so reduces the -2 below to -1, when even -2 applies to account for further distance
+                // from parent
+                index  = ((childIndex - 2) + (childIndex % 2)) / 2;
+            return index;
         }
-
-        //private Node<KeyT, ValueT> FindValue(ValueT value)
-        //{
-        //    head
-        //}
-
-        #endregion
-
-        #region Private Properties
-
-        private Node<KeyT, ValueT> Head { get; set; }
-        private Node<KeyT, ValueT> Tail { get; set; }
-
-        #endregion
-
-        #region Public Properties
-
-        public int Count { get; set; }
 
         #endregion
     }
