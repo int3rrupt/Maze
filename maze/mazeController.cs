@@ -1,4 +1,6 @@
-﻿using Maze.Imaging;
+﻿using Common.DataStructures;
+using Common.DataStructures.Interfaces;
+using Common.Imaging;
 using System.Drawing;
 
 namespace Maze
@@ -30,11 +32,18 @@ namespace Maze
         /// <param name="solutionPath">A <see cref="string"/>, the path to the solution image.</param>
         public bool SolveMaze(string imagePath, string solutionPath)
         {
-            // Create new maze image structure
-            MazeImage mazeImage = new MazeImage(imagePath);
-
-            Graph graph = new Graph(mazeImage);
-            MazeSolver.SolveMaze(graph);
+            // Generate bitmap array from image
+            BitmapArray bitmapArray = ImageHelper.ImageToBitmapArray(imagePath);
+            // Create new maze image object
+            MazeImage mazeImage = new MazeImage(bitmapArray);
+            // Generate graph from image
+            MazeGraph graph = GraphGenerator.CreateGraphFrom(mazeImage);
+            // Attempt to solve the maze
+            AStarNode mazeSolution = MazeSolver.SolveMaze<AStarNode>(graph);
+            // Draw path on image
+            mazeImage.DrawPath(mazeSolution);
+            // Write solution to image
+            ImageHelper.WriteToImage(mazeImage, solutionPath);
             // Set conversion paramters
             //BitmapConversionParams<char> bmpConvParams = new BitmapConversionParams<char>();
             //bmpConvParams.AddParameter(mazeImage.StartColor, '@');

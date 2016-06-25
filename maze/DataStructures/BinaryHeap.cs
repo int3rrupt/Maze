@@ -1,24 +1,14 @@
-﻿using DataStructures.Interfaces;
-using System;
+﻿using Common.DataStructures.Interfaces;
 using System.Collections.Generic;
 
-namespace DataStructures
+namespace Common.DataStructures
 {
     /// <summary>
     /// A Generic Binary Min Heap Class.
     /// </summary>
     /// <typeparam name="T">A <see cref="T"/>, the type used for keys and values.</typeparam>
-    public class BinaryHeap<T> where T: IComparable
+    public class BinaryHeap<TNode> where TNode: INode
     {
-        #region Declarations
-
-        /// <summary>
-        /// The <see cref="List{T}"/> used to represent the heap.
-        /// </summary>
-        protected List<INode<T>> heap;
-
-        #endregion
-
         #region Constructors
 
         /// <summary>
@@ -26,7 +16,7 @@ namespace DataStructures
         /// </summary>
         public BinaryHeap()
         {
-            heap = new List<INode<T>>();
+            NodeList = new List<INode>();
         }
 
         #endregion
@@ -36,27 +26,27 @@ namespace DataStructures
         /// <summary>
         /// Inserts the given node into the heap.
         /// </summary>
-        /// <param name="node">A <see cref="INode{T}"/>, the node to be added to the heap.</param>
-        public void Insert(INode<T> node)
+        /// <param name="node">A <see cref="INode"/>, the node to be added to the heap.</param>
+        public void Insert(INode node)
         {
             // Append to end of heap
-            heap.Add(node);
+            NodeList.Add(node);
             // Percolate new value up
             PercolateUp();
         }
 
         /// <summary>
-        /// Extracts the <see cref="INode{T}"/> with the lowest Value.
+        /// Extracts the <see cref="INode"/> with the lowest Value.
         /// </summary>
-        /// <returns>A <see cref="INode{T}"/>, the node with the lowest value.</returns>
-        public INode<T> ExtractRoot()
+        /// <returns>A <see cref="INode"/>, the node with the lowest value.</returns>
+        public INode ExtractRoot()
         {
-            INode<T> minValue = null;
+            INode minValue = null;
             // Check for empty heap
-            if (heap.Count > 0)
+            if (NodeList.Count > 0)
             {
                 // Store min value before removing
-                minValue = heap[0];
+                minValue = NodeList[0];
                 // Replace the root with last item in heap
                 Replace(0);
                 // Percolate new root downward to satisfy heap property
@@ -67,23 +57,23 @@ namespace DataStructures
 
         #endregion
 
-        #region Private Methods
+        #region Internal Methods
 
         /// <summary>
         /// Percolates the last item in the heap upward until the heap property is satisfied.
         /// </summary>
-        protected void PercolateUp()
+        internal void PercolateUp()
         {
             // Grab last item in heap
-            int currentIndex = heap.Count - 1;
+            int currentIndex = NodeList.Count - 1;
             int parentIndex = IndexOfParentFor(currentIndex);
             // While current value is less than its parent value
-            while (parentIndex > -1 && heap[currentIndex].Value.CompareTo(heap[parentIndex].Value) < 0)
+            while (parentIndex > -1 && NodeList[currentIndex].Value < NodeList[parentIndex].Value)
             {
                 // Swap current with its parent
-                INode<T> currentItem = heap[currentIndex];
-                heap[currentIndex] = heap[parentIndex];
-                heap[parentIndex] = currentItem;
+                INode currentItem = NodeList[currentIndex];
+                NodeList[currentIndex] = NodeList[parentIndex];
+                NodeList[parentIndex] = currentItem;
                 // Update indexes
                 currentIndex = parentIndex;
                 parentIndex = IndexOfParentFor(currentIndex);
@@ -93,29 +83,29 @@ namespace DataStructures
         /// <summary>
         /// Percolates the node at the given index in the heap downward until the heap property is satisfied.
         /// </summary>
-        protected void PercolateDown(int index)
+        internal void PercolateDown(int index)
         {
             // Set current index as root
             int currentIndex = index;
             int leftChildIndex = IndexOfLeftChildFor(currentIndex);
             int rightChildIndex = IndexOfRightChildFor(currentIndex);
             // While current value is greater than any of its child values
-            while ((leftChildIndex > 0 && heap[currentIndex].Value.CompareTo(heap[leftChildIndex].Value) > 0) ||
-                   (rightChildIndex > 0 && heap[currentIndex].Value.CompareTo(heap[rightChildIndex].Value) > 0))
+            while ((leftChildIndex > 0 && NodeList[currentIndex].Value > NodeList[leftChildIndex].Value) ||
+                   (rightChildIndex > 0 && NodeList[currentIndex].Value > NodeList[rightChildIndex].Value))
             {
-                INode<T> currentItem = heap[currentIndex];
+                INode currentItem = NodeList[currentIndex];
                 // Swap current with its lowest valued child
-                if (rightChildIndex < 1 || heap[leftChildIndex].Value.CompareTo(heap[rightChildIndex].Value) < 0)
+                if (rightChildIndex < 1 || NodeList[leftChildIndex].Value < NodeList[rightChildIndex].Value)
                 {
-                    heap[currentIndex] = heap[leftChildIndex];
-                    heap[leftChildIndex] = currentItem;
+                    NodeList[currentIndex] = NodeList[leftChildIndex];
+                    NodeList[leftChildIndex] = currentItem;
                     // Update current index
                     currentIndex = leftChildIndex;
                 }
                 else
                 {
-                    heap[currentIndex] = heap[rightChildIndex];
-                    heap[rightChildIndex] = currentItem;
+                    NodeList[currentIndex] = NodeList[rightChildIndex];
+                    NodeList[rightChildIndex] = currentItem;
                     // Update current index
                     currentIndex = rightChildIndex;
                 }
@@ -128,14 +118,14 @@ namespace DataStructures
         /// <summary>
         /// Replaces the node at the given index of the heap with the last item in the heap.
         /// </summary>
-        protected void Replace(int index)
+        internal void Replace(int index)
         {
             // Get last item
-            INode<T> lastItem = heap[heap.Count - 1];
+            INode lastItem = NodeList[NodeList.Count - 1];
             // Write last item to given index
-            heap[index] = lastItem;
+            NodeList[index] = lastItem;
             // Remove last item
-            heap.RemoveAt(heap.Count - 1);
+            NodeList.RemoveAt(NodeList.Count - 1);
         }
 
         /// <summary>
@@ -143,12 +133,12 @@ namespace DataStructures
         /// </summary>
         /// <param name="parentIndex">An <see cref="int"/>, the parent's index used to find the index of its left child.</param>
         /// <returns>An <see cref="int"/>, the index of the given parent's left child. Returns -1 when no left child exists for the given parent index.</returns>
-        protected int IndexOfLeftChildFor(int parentIndex)
+        internal int IndexOfLeftChildFor(int parentIndex)
         {
             // Find potential left child index
             int index = (2 * parentIndex) + 1;
             // Verify index not greater than size of heap
-            if (index >= heap.Count)
+            if (index >= NodeList.Count)
                 index = -1;
             return index;
         }
@@ -158,13 +148,13 @@ namespace DataStructures
         /// </summary>
         /// <param name="parentIndex">An <see cref="int"/>, the parent's index used to find the index of its right child.</param>
         /// <returns>An <see cref="int"/>, the index of the given parent's right child. Returns -1 when no right child exists for the given parent index.</returns>
-        protected int IndexOfRightChildFor(int parentIndex)
+        internal int IndexOfRightChildFor(int parentIndex)
         {
             int index;
             // Find left child index
             int leftChildIndex = IndexOfLeftChildFor(parentIndex);
             // Verify left child exists and that right child index not greater than size of heap
-            if (leftChildIndex < 1 || leftChildIndex + 1 >= heap.Count)
+            if (leftChildIndex < 1 || leftChildIndex + 1 >= NodeList.Count)
                 index = -1;
             else
                 index = leftChildIndex + 1;
@@ -176,7 +166,7 @@ namespace DataStructures
         /// </summary>
         /// <param name="childIndex">An <see cref="int"/>, the index of the child who's parent is to be found.</param>
         /// <returns>An <see cref="int"/>, the index of the parent to the child at the given index. Returns -1 when no parent exists for the given child index.</returns>
-        protected int IndexOfParentFor(int childIndex)
+        internal int IndexOfParentFor(int childIndex)
         {
             int index;
             // Verify given child index isn't root of heap
@@ -190,6 +180,33 @@ namespace DataStructures
                 index  = ((childIndex - 2) + (childIndex % 2)) / 2;
             return index;
         }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Returns the <see cref="INode"/> with the lowest value but does not remove it from the heap.
+        /// </summary>
+        public INode Peek
+        {
+            get
+            {
+                // TODO: Fix this, user could potentially update node's values
+                if (NodeList.Count > 0)
+                    return NodeList[0];
+                return null;
+            }
+        }
+
+        #endregion
+
+        #region Internal Properties
+
+        /// <summary>
+        /// A <see cref="List{T}"/> of <see cref="INode{T}"/> used to represent the heap.
+        /// </summary>
+        internal List<INode> NodeList { get; set; }
 
         #endregion
     }

@@ -1,4 +1,5 @@
-﻿using Maze.Imaging;
+﻿using Common.DataStructures;
+using Maze.Enums;
 using System.Drawing;
 
 namespace Maze
@@ -14,30 +15,29 @@ namespace Maze
         /// Creates a new MazeImage structure with default values.
         /// </summary>
         /// <param name="imagePath"></param>
-        public MazeImage(string imagePath)
+        public MazeImage(BitmapArray bitmapArray)
         {
-            Initialize(imagePath, Color.Red, Color.Blue, Color.Green, Color.White, Color.Black);
+            Initialize(bitmapArray, Color.Red, Color.Blue, Color.Green, Color.White, Color.Black);
         }
 
         /// <summary>
         /// Creates a new MazeImage structure using provided values.
         /// </summary>
-        /// <param name="imagePath"></param>
         /// <param name="startColor"></param>
         /// <param name="finishColor"></param>
         /// <param name="pathColor"></param>
         /// <param name="floorColor"></param>
         /// <param name="wallColor"></param>
-        public MazeImage(string imagePath, Color startColor, Color finishColor, Color pathColor, Color floorColor, Color wallColor)
+        public MazeImage(BitmapArray bitmapArray, Color startColor, Color finishColor, Color pathColor, Color floorColor, Color wallColor)
         {
-            Initialize(imagePath, startColor, finishColor, pathColor, floorColor, wallColor);
+            Initialize(bitmapArray, startColor, finishColor, pathColor, floorColor, wallColor);
         }
 
         #endregion
 
-        public void Initialize(string imagePath, Color startColor, Color finishColor, Color pathColor, Color floorColor, Color wallColor)
+        private void Initialize(BitmapArray bitmapArray, Color startColor, Color finishColor, Color pathColor, Color floorColor, Color wallColor)
         {
-            ImagePath = imagePath;
+            BitmapArr = bitmapArray;
             StartColor = startColor;
             FinishColor = finishColor;
             PathColor = pathColor;
@@ -49,9 +49,6 @@ namespace Maze
             PathColorArgb = PathColor.ToArgb();
             FloorColorArgb = FloorColor.ToArgb();
             WallColorArgb = WallColor.ToArgb();
-
-            // Generate bitmap array from image
-            BitmapArr = ImageHelper.ImageToBitmapArray(ImagePath);
         }
 
         public MazeNodeType GetPixel(int x, int y)
@@ -70,9 +67,23 @@ namespace Maze
             return MazeNodeType.Floor; ;
         }
 
+        public void DrawPath(AStarNode node)
+        {
+            AStarNode currentNode = node;
+            while (currentNode != null)
+            {
+                BitmapArr.UpdateArgbAt(1, 2, PathColor.A, PathColor.R, PathColor.G, PathColor.B);
+                currentNode = (AStarNode)currentNode.Parent;
+            }
+        }
+
+        public byte[] ToByteArray()
+        {
+            return BitmapArr.ByteArr;
+        }
+
         #region Properties
 
-        public string ImagePath { get; set; }
         /// <summary>
         /// The starting color
         /// </summary>

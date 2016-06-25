@@ -7,7 +7,7 @@ namespace Maze
         static void Main(string[] args)
         {
             // DEBUG
-            args = new string[] { @"C:\Users\reyes\Downloads\maze2.png", @"C:\Users\reyes\Downloads\mazeSolution.png" };
+            args = new string[] { @"C:\Users\reyes\Downloads\smallmaze1.png", @"C:\Users\reyes\Downloads\mazeSolution.png" };
 
 
 

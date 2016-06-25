@@ -1,10 +1,12 @@
-﻿using Maze.Exceptions;
+﻿using Common.DataStructures;
+using Maze;
+using Maze.Exceptions;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace Maze.Imaging
+namespace Common.Imaging
 {
     public static class ImageHelper
     {
@@ -46,6 +48,15 @@ namespace Maze.Imaging
             catch
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public static void WriteToImage(MazeImage mazeImage, string outputPath)
+        {
+            using (MemoryStream memStream = new MemoryStream(mazeImage.ToByteArray()))
+            {
+                Image image = Bitmap.FromStream(memStream);
+                image.Save(outputPath);
             }
         }
 
@@ -114,7 +125,7 @@ namespace Maze.Imaging
                 bitmap.Dispose();
                 throw new UnsupportedImageFormatException(imagePath, pixelFormat);
             }
-            catch (ArgumentException Ex)
+            catch (ArgumentException)
             {
                 throw new NotImplementedException();
             }

@@ -45,10 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AStarNode.cs" />
+    <Compile Include="DataStructures\AStarNode.cs" />
+    <Compile Include="GraphGenerator.cs" />
     <Compile Include="OldBinaryHeap.cs" />
-    <Compile Include="BinaryHeap.cs" />
-    <Compile Include="Imaging\BitmapArray.cs" />
+    <Compile Include="DataStructures\BinaryHeap.cs" />
+    <Compile Include="DataStructures\BitmapArray.cs" />
     <Compile Include="Imaging\BitmapConversionParams.cs" />
     <Compile Include="Imaging\BitsPerColor.cs" />
     <Compile Include="Exceptions\ExceptionMessages.Designer.cs">
@@ -56,13 +57,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
-    <Compile Include="Graph.cs" />
+    <Compile Include="DataStructures\MazeGraph.cs" />
     <Compile Include="Imaging\ImageHelper.cs" />
-    <Compile Include="MazeNodeType.cs" />
+    <Compile Include="Enums\MazeNodeType.cs" />
     <Compile Include="MazeImage.cs" />
-    <Compile Include="INode.cs" />
+    <Compile Include="DataStructures\Interfaces\INode.cs" />
     <Compile Include="NodeType.cs" />
-    <Compile Include="PriorityQueue.cs" />
+    <Compile Include="DataStructures\PriorityQueue.cs" />
     <Compile Include="OldNode.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

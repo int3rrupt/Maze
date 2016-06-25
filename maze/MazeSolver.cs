@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.Algorithms;
+using Common.DataStructures;
+using Common.DataStructures.Interfaces;
 using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace Maze
 {
@@ -34,9 +31,12 @@ namespace Maze
         /// <param name="startColor"></param>
         /// <param name="finishColor"></param>
         /// <returns></returns>
-        public static void SolveMaze(Graph graph)
+        public static TNode SolveMaze<TNode>(MazeGraph graph) where TNode : INode
         {
-            SearchAlgorithms.AStar(graph);
+            if (typeof(TNode) == typeof(AStarNode))
+                return (TNode)SearchAlgorithms.AStar(graph);
+
+            return default(TNode);
         }
 
         #endregion

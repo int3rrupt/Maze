@@ -1,6 +1,6 @@
-﻿using Maze.Imaging;
+﻿using Common.Imaging;
 
-namespace Maze
+namespace Common.DataStructures
 {
     /// <summary>
     /// An array of bytes containing a bitmap.
@@ -82,6 +82,15 @@ namespace Maze
                         ByteArr[byteIndex + 3] << 24); // A
 
             return aRGB;
+        }
+
+        public void UpdateArgbAt(int x, int y, byte A, byte R, byte G, byte B)
+        {
+            int byteIndex = (x * Bpp / 8) + (y * (Stride));
+            ByteArr[byteIndex] = B;
+            ByteArr[byteIndex + 1] = G;
+            ByteArr[byteIndex + 2] = R;
+            ByteArr[byteIndex + 3] = A;
         }
 
         #endregion

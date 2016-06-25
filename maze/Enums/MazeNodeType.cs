@@ -1,5 +1,8 @@
-﻿namespace Maze
+﻿namespace Maze.Enums
 {
+    /// <summary>
+    /// Describes the type of node
+    /// </summary>
     public enum MazeNodeType
     {
         Start,

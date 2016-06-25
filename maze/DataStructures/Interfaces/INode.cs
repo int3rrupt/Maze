@@ -1,23 +1,21 @@
-﻿using System;
-
-/// <summary>
+﻿/// <summary>
 /// Defines properties common to all nodes.
 /// </summary>
-namespace DataStructures.Interfaces
+namespace Common.DataStructures.Interfaces
 {
-    public interface INode<T> where T : IComparable
+    public interface INode
     {
         /// <summary>
         /// The node key. An ID.
         /// </summary>
-        T Key { get; set; }
+        int Key { get; set; }
         /// <summary>
         /// The value of the node.
         /// </summary>
-        T Value { get; set; }
+        int Value { get; set; }
         /// <summary>
         /// The parent to the node.
         /// </summary>
-        INode<T> Parent { get; set; }
+        INode Parent { get; set; }
     }
 }

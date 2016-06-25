@@ -1,4 +1,4 @@
-﻿namespace Maze.Imaging
+﻿namespace Common.Imaging
 {
     /// <summary>
     /// The number of bits for each of the colors.
