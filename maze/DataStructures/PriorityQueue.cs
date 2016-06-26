@@ -49,7 +49,15 @@ namespace Common.DataStructures
         /// <returns>A <see cref="T"/>, the item requested.</returns>
         public AStarNode Dequeue(int key)
         {
-            int index = Heap.NodeList.FindIndex(n => n.Key.CompareTo(key) == 0);
+            int index = FindNodeIndexWithKey(key);
+            return DequeueAt(index);
+        }
+
+        public AStarNode DequeueAt(int index)
+        {
+            if (index < 0 || index >= Heap.NodeList.Count)
+                return null;
+            //int index = Heap.NodeList.FindIndex(n => n.Key.CompareTo(key) == 0);
             AStarNode node = (AStarNode)Heap.NodeList[index];
             Heap.Replace(index);
             Heap.PercolateDown(index);
@@ -67,7 +75,16 @@ namespace Common.DataStructures
         /// <returns>An <see cref="AStarNode{T}"/>, the node containing the given key.</returns>
         public AStarNode Exists(int key)
         {
-            return (AStarNode)Heap.NodeList.Find(n => n.Key.CompareTo(key) == 0);
+            int index = FindNodeIndexWithKey(key);
+            if (index > -1)
+                return (AStarNode)Heap.NodeList[index];
+            return null;
+            //return (AStarNode)Heap.NodeList.Find(n => n.Key.CompareTo(key) == 0);
+        }
+
+        public AStarNode PeekAt(int index)
+        {
+            return (AStarNode)Heap.NodeList[index];
         }
 
         #endregion
@@ -75,6 +92,17 @@ namespace Common.DataStructures
         #endregion
 
         #region Private Methods
+
+        public int FindNodeIndexWithKey(int key)
+        {
+            for (int i = 0; i < Heap.NodeList.Count; i++)
+            {
+                if (Heap.NodeList[i].Key == key)
+                    return i;
+            }
+
+            return -1;
+        }
 
         private AStarNode CopyNode(AStarNode node)
         {

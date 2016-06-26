@@ -18,6 +18,7 @@ namespace Maze
             int finishLocationX = -1;
             int finishLocationY = -1;
 
+
             // NOTES
             // ID of pixel = x + width(y)
             // x coordinate of pixel = ID - width(y)
@@ -32,6 +33,12 @@ namespace Maze
                     MazeNodeType nodeType = mazeImage.GetPixel(x, y);
                     if (nodeType != MazeNodeType.Wall)
                     {
+                        // If this is a start node and no start location has been set
+                        if (nodeType == MazeNodeType.Start && startLocationX != -1)
+                        {
+                            // Check whether this node has access to a path
+
+                        }
                         // Check for neighbors
                         List<int> neighbors = new List<int>();
                         for (int i = 0; i < 4; i++)
@@ -85,6 +92,38 @@ namespace Maze
 
             // Create new graph
             return new MazeGraph(dictionary, mazeImage.Width, startLocationX, startLocationY, finishLocationX, finishLocationY);
+        }
+
+        //private bool NodeCanAccessPath(int x, int y, MazeGraph graph)
+        //{
+        //    foreach (int neighborId in graph.GetNeighbors(x, y))
+        //    {
+        //        graph.
+        //    }
+        //}
+
+        private static void GetBorder(int startX, int startY)
+        {
+            /* current = start
+             * whil something
+             * // Check neighbors
+             * if current.top != null && current.top include
+             *      add to collection
+             *      current = current.top
+             *      continue
+             * if current.right != null && current.top include
+             *      add to collection
+             *      current = current.right
+             *      continue
+             * if current.bottom != null && current.bottom include
+             *      add to collection
+             *      current = current.bottom
+             *      continue
+             * if current.left != null && current.left include
+             *      add to collection
+             *      current = current.left
+             *      continue
+            */
         }
 
         #endregion

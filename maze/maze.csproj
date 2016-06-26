@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="DataStructures\AStarNode.cs" />
     <Compile Include="GraphGenerator.cs" />
+    <Compile Include="Imaging\CustomColor.cs" />
     <Compile Include="OldBinaryHeap.cs" />
     <Compile Include="DataStructures\BinaryHeap.cs" />
     <Compile Include="DataStructures\BitmapArray.cs" />

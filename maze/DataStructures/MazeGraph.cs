@@ -15,6 +15,11 @@ namespace Common.DataStructures
             FinishLocationY = finishLocationY;
         }
 
+        public List<int> GetNeighbors(int x, int y)
+        {
+            return GetNeighbors(LocationToId(x, y));
+        }
+
         public List<int> GetNeighbors(int nodeId)
         {
             List<int> value;

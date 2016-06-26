@@ -1,4 +1,5 @@
 ﻿using Common.Imaging;
+using System.Drawing.Imaging;
 
 namespace Common.DataStructures
 {
@@ -32,6 +33,7 @@ namespace Common.DataStructures
 
         public int Width { get; set; }
         public int Height { get; set; }
+        public PixelFormat PixelFormat { get; set; }
 
         #endregion
 
@@ -43,7 +45,7 @@ namespace Common.DataStructures
         /// <param name="byteArr">A <see cref="int"/>, containing the bitmap.</param>
         /// <param name="bpp">A <see cref="int"/>, containing the bitmap.</param>
         /// <param name="stride">An <see cref="ByteArr[]"/>, the bits per pixel of the bitmap.</param>
-        public BitmapArray(byte[] byteArr, int stride, int bpp, BitsPerColor bpc, int width, int height)
+        public BitmapArray(byte[] byteArr, int stride, int bpp, BitsPerColor bpc, int width, int height, PixelFormat pixelFormat)
         {
             ByteArr = byteArr;
             Stride = stride;
@@ -51,6 +53,7 @@ namespace Common.DataStructures
             Bpc = bpc;
             Width = width;
             Height = height;
+            PixelFormat = pixelFormat;
             // Calculate bitmap padding
             // Bpp / 8 = Number of bytes
             // Stride % Number of Bytes = Padding in Bytes
@@ -71,15 +74,37 @@ namespace Common.DataStructures
         /// <returns>An <see cref="int"/>, the ARGB value.</returns>
         public int GetArgbAt(int x, int y)
         {
-            // Provides index to first color value for current pixel
-            //    current column      Bits in row * current row
-            // x(Bytes Per Pixel)     +     (y * stride) 
-            int byteIndex = (x * Bpp / 8) + (y * (Stride));
-            // Place all into single int in form: AARRGGBB
-            int aRGB = (ByteArr[byteIndex] |           // B
-                        ByteArr[byteIndex + 1] << 8 |  // G
-                        ByteArr[byteIndex + 2] << 16 | // R
-                        ByteArr[byteIndex + 3] << 24); // A
+            int aRGB = -1;
+            switch (PixelFormat)
+            {
+                case PixelFormat.Format32bppArgb:
+                    {
+                        // Provides index to first color value for current pixel
+                        //    current column      Bits in row * current row
+                        // x(Bytes Per Pixel)     +     (y * stride) 
+                        int byteIndex = (x * Bpp / 8) + (y * (Stride));
+                        // Place all into single int in form: AARRGGBB
+                        aRGB = (ByteArr[byteIndex] |           // B
+                                    ByteArr[byteIndex + 1] << 8 |  // G
+                                    ByteArr[byteIndex + 2] << 16 | // R
+                                    ByteArr[byteIndex + 3] << 24); // A}
+                        break;
+                    }
+                case PixelFormat.Format24bppRgb:
+                    {
+                        // Provides index to first color value for current pixel
+                        //    current column      Bits in row * current row
+                        // x(Bytes Per Pixel)     +     (y * stride) 
+                        int byteIndex = (x * Bpp / 8) + (y * (Stride));
+                        // Place all into single int in form: AARRGGBB
+                        aRGB = (ByteArr[byteIndex] |           // B
+                                    ByteArr[byteIndex + 1] << 8 |  // G
+                                    ByteArr[byteIndex + 2] << 16 | // R
+                                    255 << 24); // A
+                        break;
+                    }
+            }
+            
 
             return aRGB;
         }

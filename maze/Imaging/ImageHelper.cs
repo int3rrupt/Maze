@@ -38,14 +38,14 @@ namespace Common.Imaging
                     System.Runtime.InteropServices.Marshal.Copy(bmpData.Scan0, imgByteArr, 0, imgByteCount);
                     BitsPerColor bpc = GetBpc(bitmap.PixelFormat);
                     // Create new BitmapArray to store our values
-                    BitmapArray bmpArr = new BitmapArray(imgByteArr, bmpData.Stride, bpp, bpc, bitmap.Width, bitmap.Height);
+                    BitmapArray bmpArr = new BitmapArray(imgByteArr, bmpData.Stride, bpp, bpc, bitmap.Width, bitmap.Height, bitmap.PixelFormat);
                     // Release the bitmap lock
                     bitmap.UnlockBits(bmpData);
 
                     return bmpArr;
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 throw new NotImplementedException();
             }
@@ -53,10 +53,23 @@ namespace Common.Imaging
 
         public static void WriteToImage(MazeImage mazeImage, string outputPath)
         {
-            using (MemoryStream memStream = new MemoryStream(mazeImage.ToByteArray()))
+            using (Bitmap bitmap = new Bitmap(mazeImage.Width, mazeImage.Height, mazeImage.PixelFormat))
             {
-                Image image = Bitmap.FromStream(memStream);
-                image.Save(outputPath);
+                // Lock bitmap into system memory while we copy its data
+                BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, mazeImage.Width, mazeImage.Height), ImageLockMode.WriteOnly, mazeImage.PixelFormat);
+                // Calculate total array size based on image height and image stride
+                int imgByteCount = Math.Abs(mazeImage.Stride) * mazeImage.Height;
+                // Initialize a new byte array to store the copied image byte values
+                //byte[] imgByteArr = new byte[imgByteCount];
+                // Copy unmanaged bitmap data
+                //System.Runtime.InteropServices.Marshal.Copy(imgByteArr, 0, bmpData.Scan0, imgByteCount);
+                //BitsPerColor bpc = GetBpc(bitmap.PixelFormat);
+                // Create new BitmapArray to store our values
+                ///BitmapArray bmpArr = new BitmapArray(imgByteArr, bmpData.Stride, bpp, bpc, bitmap.Width, bitmap.Height);
+                System.Runtime.InteropServices.Marshal.Copy(mazeImage.ToByteArray(), 0, bmpData.Scan0, imgByteCount);
+                bitmap.Save(outputPath);
+                // Release the bitmap lock
+                bitmap.UnlockBits(bmpData);
             }
         }
 

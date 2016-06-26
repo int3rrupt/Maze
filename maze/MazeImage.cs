@@ -1,6 +1,7 @@
 ﻿using Common.DataStructures;
+using Common.Imaging;
 using Maze.Enums;
-using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Maze
 {
@@ -17,7 +18,12 @@ namespace Maze
         /// <param name="imagePath"></param>
         public MazeImage(BitmapArray bitmapArray)
         {
-            Initialize(bitmapArray, Color.Red, Color.Blue, Color.Green, Color.White, Color.Black);
+            CustomColor red = new CustomColor(255, 255, 0, 0);
+            CustomColor blue = new CustomColor(255, 0, 0, 255);
+            CustomColor green = new CustomColor(255, 0, 255, 0);
+            CustomColor white = new CustomColor(255, 255, 255, 255);
+            CustomColor black = new CustomColor(255, 0, 0, 0);
+            Initialize(bitmapArray, red, blue, green, white, black);
         }
 
         /// <summary>
@@ -28,14 +34,27 @@ namespace Maze
         /// <param name="pathColor"></param>
         /// <param name="floorColor"></param>
         /// <param name="wallColor"></param>
-        public MazeImage(BitmapArray bitmapArray, Color startColor, Color finishColor, Color pathColor, Color floorColor, Color wallColor)
+        public MazeImage(
+            BitmapArray bitmapArray,
+            PixelFormat pixelFormat,
+            CustomColor startColor,
+            CustomColor finishColor,
+            CustomColor pathColor,
+            CustomColor floorColor,
+            CustomColor wallColor)
         {
             Initialize(bitmapArray, startColor, finishColor, pathColor, floorColor, wallColor);
         }
 
         #endregion
 
-        private void Initialize(BitmapArray bitmapArray, Color startColor, Color finishColor, Color pathColor, Color floorColor, Color wallColor)
+        private void Initialize(
+            BitmapArray bitmapArray,
+            CustomColor startColor,
+            CustomColor finishColor,
+            CustomColor pathColor,
+            CustomColor floorColor,
+            CustomColor wallColor)
         {
             BitmapArr = bitmapArray;
             StartColor = startColor;
@@ -72,7 +91,9 @@ namespace Maze
             AStarNode currentNode = node;
             while (currentNode != null)
             {
-                BitmapArr.UpdateArgbAt(1, 2, PathColor.A, PathColor.R, PathColor.G, PathColor.B);
+                int x = IndexToX(currentNode.Key);
+                int y = IndexToY(currentNode.Key);
+                BitmapArr.UpdateArgbAt(x, y, PathColor.A, PathColor.R, PathColor.G, PathColor.B);
                 currentNode = (AStarNode)currentNode.Parent;
             }
         }
@@ -82,40 +103,58 @@ namespace Maze
             return BitmapArr.ByteArr;
         }
 
+        public int IndexToX(int pixelIndex)
+        {
+            return pixelIndex - Width * (pixelIndex / Width);
+        }
+
+        public int IndexToY(int pixelIndex)
+        {
+            return pixelIndex / Width;
+        }
+
+        public int LocationToIndex(int x, int y)
+        {
+            return x + (Width * y);
+        }
+
         #region Properties
 
         /// <summary>
         /// The starting color
         /// </summary>
-        public Color StartColor { get; set; }
+        public CustomColor StartColor { get; set; }
         private int StartColorArgb;
         /// <summary>
         /// The finishing color
         /// </summary>
-        public Color FinishColor { get; set; }
+        public CustomColor FinishColor { get; set; }
         public int FinishColorArgb { get; set; }
         /// <summary>
         /// The path color
         /// </summary>
-        public Color PathColor { get; set; }
+        public CustomColor PathColor { get; set; }
         public int PathColorArgb { get; set; }
         /// <summary>
         /// The floor color
         /// </summary>
-        public Color FloorColor { get; set; }
+        public CustomColor FloorColor { get; set; }
         public int FloorColorArgb { get; set; }
         /// <summary>
         /// The wall color
         /// </summary>
-        public Color WallColor { get; set; }
+        public CustomColor WallColor { get; set; }
         public int WallColorArgb { get; set; }
 
         public int Width { get { return BitmapArr.Width; } }
         public int Height { get { return BitmapArr.Height; } }
         public int DeviationAmount { get; set; }
+        public PixelFormat PixelFormat { get { return BitmapArr.PixelFormat; } }
+        public int Stride { get { return BitmapArr.Stride; } }
 
 
         private BitmapArray BitmapArr { get; set; }
+        
 
         #endregion
     }

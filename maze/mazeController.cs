@@ -1,5 +1,4 @@
 ﻿using Common.DataStructures;
-using Common.DataStructures.Interfaces;
 using Common.Imaging;
 using System.Drawing;
 
@@ -44,6 +43,11 @@ namespace Maze
             mazeImage.DrawPath(mazeSolution);
             // Write solution to image
             ImageHelper.WriteToImage(mazeImage, solutionPath);
+            // Determine if solution was found
+            if (mazeSolution.Key == graph.FinishId)
+                return true;
+
+            return false;
             // Set conversion paramters
             //BitmapConversionParams<char> bmpConvParams = new BitmapConversionParams<char>();
             //bmpConvParams.AddParameter(mazeImage.StartColor, '@');
@@ -64,8 +68,6 @@ namespace Maze
 
             //    FileHelper.WriteImage(solutionImage, solutionPath);
             //}
-
-            return false;
         }
 
         public void BitmapToGraph(Bitmap bitmap)
