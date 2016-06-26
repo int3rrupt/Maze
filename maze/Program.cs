@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Maze
 {
@@ -9,8 +10,17 @@ namespace Maze
             DateTime startTime = DateTime.Now;
             Console.WriteLine($"Start time: {startTime.ToString()}");
             // DEBUG
-            args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze3.png", $"C:\\Users\\reyes\\Downloads\\TestImages\\mazeSolution_{startTime.ToString("HH_mm_ss")}.png" };
+            if (args.Length == 0)
+                args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze3.png", $"C:\\Users\\reyes\\Downloads\\TestImages\\mazeSolution_{startTime.ToString("HH_mm_ss")}.png" };
+            //args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze3.png"};
 
+            //string output = string.Empty;
+            //if (args.Length == 1 || args.Length == 2)
+            //{
+            //    if (args.Length == 1)
+            //        output = $"{Path.GetDirectoryName(args[0])} {Path.GetFileNameWithoutExtension(args[0])}_{startTime.ToString("hh_mm_ss")}.{Path.GetExtension(args[0])}";
+            //}
+            //switch()
 
             // Check user input
             if (args.Length != 2)

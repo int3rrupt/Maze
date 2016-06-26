@@ -7,16 +7,16 @@ namespace Common.DataStructures
     /// A Generic Binary Min Heap Class.
     /// </summary>
     /// <typeparam name="T">A <see cref="T"/>, the type used for keys and values.</typeparam>
-    public class BinaryHeap<TNode> where TNode : IAStarNode
+    public class BinaryHeapOld<TNode> where TNode: INode
     {
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryHeap{T}"/> class.
         /// </summary>
-        public BinaryHeap()
+        public BinaryHeapOld()
         {
-            NodeList = new List<IAStarNode>();
+            NodeList = new List<INode>();
         }
 
         #endregion
@@ -26,8 +26,8 @@ namespace Common.DataStructures
         /// <summary>
         /// Inserts the given node into the heap.
         /// </summary>
-        /// <param name="node">A <see cref="IAStarNode"/>, the node to be added to the heap.</param>
-        public void Insert(IAStarNode node)
+        /// <param name="node">A <see cref="INode"/>, the node to be added to the heap.</param>
+        public void Insert(INode node)
         {
             // Append to end of heap
             NodeList.Add(node);
@@ -36,12 +36,12 @@ namespace Common.DataStructures
         }
 
         /// <summary>
-        /// Extracts the <see cref="IAStarNode"/> with the lowest Value.
+        /// Extracts the <see cref="INode"/> with the lowest Value.
         /// </summary>
-        /// <returns>A <see cref="IAStarNode"/>, the node with the lowest value.</returns>
-        public IAStarNode ExtractRoot()
+        /// <returns>A <see cref="INode"/>, the node with the lowest value.</returns>
+        public INode ExtractRoot()
         {
-            IAStarNode minValue = null;
+            INode minValue = null;
             // Check for empty heap
             if (NodeList.Count > 0)
             {
@@ -62,50 +62,38 @@ namespace Common.DataStructures
         /// <summary>
         /// Percolates the last item in the heap upward until the heap property is satisfied.
         /// </summary>
-        internal int PercolateUp()
+        internal void PercolateUp()
         {
             // Grab last item in heap
             int currentIndex = NodeList.Count - 1;
             int parentIndex = IndexOfParentFor(currentIndex);
             // While current value is less than its parent value
-            // OR
-            // current value == parent value AND current H greater than parent H
-            while (parentIndex > -1 &&
-                  (NodeList[currentIndex].Value < NodeList[parentIndex].Value ||
-                  (NodeList[currentIndex].Value == NodeList[parentIndex].Value &&
-                   NodeList[currentIndex].H < NodeList[parentIndex].H)))
+            while (parentIndex > -1 && NodeList[currentIndex].Value < NodeList[parentIndex].Value)
             {
                 // Swap current with its parent
-                IAStarNode currentItem = NodeList[currentIndex];
+                INode currentItem = NodeList[currentIndex];
                 NodeList[currentIndex] = NodeList[parentIndex];
                 NodeList[parentIndex] = currentItem;
                 // Update indexes
                 currentIndex = parentIndex;
                 parentIndex = IndexOfParentFor(currentIndex);
             }
-            return currentIndex;
         }
 
         /// <summary>
         /// Percolates the node at the given index in the heap downward until the heap property is satisfied.
         /// </summary>
-        internal int PercolateDown(int index)
+        internal void PercolateDown(int index)
         {
             // Set current index as root
             int currentIndex = index;
             int leftChildIndex = IndexOfLeftChildFor(currentIndex);
             int rightChildIndex = IndexOfRightChildFor(currentIndex);
             // While current value is greater than any of its child values
-            while ( (leftChildIndex > 0 &&
-                    (NodeList[currentIndex].Value > NodeList[leftChildIndex].Value ||
-                    (NodeList[currentIndex].Value == NodeList[leftChildIndex].Value &&
-                     NodeList[currentIndex].H > NodeList[leftChildIndex].Value))) ||
-                    (rightChildIndex > 0 &&
-                    (NodeList[currentIndex].Value > NodeList[rightChildIndex].Value ||
-                    (NodeList[currentIndex].Value == NodeList[rightChildIndex].Value &&
-                     NodeList[currentIndex].H > NodeList[rightChildIndex].H))))
+            while ((leftChildIndex > 0 && NodeList[currentIndex].Value > NodeList[leftChildIndex].Value) ||
+                   (rightChildIndex > 0 && NodeList[currentIndex].Value > NodeList[rightChildIndex].Value))
             {
-                IAStarNode currentItem = NodeList[currentIndex];
+                INode currentItem = NodeList[currentIndex];
                 // Swap current with its lowest valued child
                 if (rightChildIndex < 1 || NodeList[leftChildIndex].Value < NodeList[rightChildIndex].Value)
                 {
@@ -125,7 +113,6 @@ namespace Common.DataStructures
                 leftChildIndex = IndexOfLeftChildFor(currentIndex);
                 rightChildIndex = IndexOfRightChildFor(currentIndex);
             }
-            return currentIndex;
         }
 
         /// <summary>
@@ -134,7 +121,7 @@ namespace Common.DataStructures
         internal void Replace(int index)
         {
             // Get last item
-            IAStarNode lastItem = NodeList[NodeList.Count - 1];
+            INode lastItem = NodeList[NodeList.Count - 1];
             // Write last item to given index
             NodeList[index] = lastItem;
             // Remove last item
@@ -190,7 +177,7 @@ namespace Common.DataStructures
                 // childIndex % 2 determines odd/even. When odd index is left child, when even is right child.
                 // % 2 equals 1 when odd and so reduces the -2 below to -1, when even -2 applies to account for further distance
                 // from parent
-                index = ((childIndex - 2) + (childIndex % 2)) / 2;
+                index  = ((childIndex - 2) + (childIndex % 2)) / 2;
             return index;
         }
 
@@ -199,9 +186,9 @@ namespace Common.DataStructures
         #region Public Properties
 
         /// <summary>
-        /// Returns the <see cref="IAStarNode"/> with the lowest value but does not remove it from the heap.
+        /// Returns the <see cref="INode"/> with the lowest value but does not remove it from the heap.
         /// </summary>
-        public IAStarNode Peek
+        public INode Peek
         {
             get
             {
@@ -217,9 +204,9 @@ namespace Common.DataStructures
         #region Internal Properties
 
         /// <summary>
-        /// A <see cref="List{T}"/> of <see cref="IAStarNode{T}"/> used to represent the heap.
+        /// A <see cref="List{T}"/> of <see cref="INode{T}"/> used to represent the heap.
         /// </summary>
-        internal List<IAStarNode> NodeList { get; set; }
+        internal List<INode> NodeList { get; set; }
 
         #endregion
     }

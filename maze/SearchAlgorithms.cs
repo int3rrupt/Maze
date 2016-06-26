@@ -2,6 +2,7 @@
 using Common.DataStructures.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Common.Algorithms
 {
@@ -47,7 +48,8 @@ namespace Common.Algorithms
                         AStarNode neighbor = open.DequeueAt(neighborOpenIndex);
                         neighbor.G = cost;
                         neighbor.Value = neighbor.G + neighbor.H;
-                        closed.Add(neighbor);
+                        neighbor.Parent = currentNode;
+                        open.Enqueue(neighbor);
                     }
                     else if ((neighborClosedIndex = FindNodeIndexWithKey(id, closed)) > -1 && cost < closed[neighborClosedIndex].G)
                     //else if ((neighbor = closed.Find(n => n.Key == id)) != null && cost < neighbor.G)
@@ -57,6 +59,7 @@ namespace Common.Algorithms
                         //closed.Remove(neighbor);
                         neighbor.G = cost;
                         neighbor.Value = neighbor.G + neighbor.H;
+                        neighbor.Parent = currentNode;
                         open.Enqueue(neighbor);
                     }
                     else if (neighborOpenIndex == -1 && neighborClosedIndex == -1)

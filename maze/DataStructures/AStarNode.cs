@@ -2,7 +2,7 @@
 
 namespace Common.DataStructures
 {
-    public class AStarNode : INode
+    public class AStarNode : IAStarNode
     {
         #region Constructor
 

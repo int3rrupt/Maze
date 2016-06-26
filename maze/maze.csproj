@@ -46,10 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataStructures\AStarNode.cs" />
+    <Compile Include="DataStructures\Interfaces\IAStarNode.cs" />
+    <Compile Include="DataStructures\BinaryHeap.cs" />
     <Compile Include="GraphGenerator.cs" />
     <Compile Include="Imaging\CustomColor.cs" />
     <Compile Include="OldBinaryHeap.cs" />
-    <Compile Include="DataStructures\BinaryHeap.cs" />
+    <Compile Include="DataStructures\BinaryHeapOld.cs" />
     <Compile Include="DataStructures\BitmapArray.cs" />
     <Compile Include="Imaging\BitmapConversionParams.cs" />
     <Compile Include="Imaging\BitsPerColor.cs" />

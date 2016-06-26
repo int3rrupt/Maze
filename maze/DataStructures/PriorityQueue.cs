@@ -2,7 +2,7 @@
 
 namespace Common.DataStructures
 {
-    public class PriorityQueue<TNode> where TNode : INode
+    public class PriorityQueue<TNode> where TNode : IAStarNode
     {
         #region Constructors
 
@@ -115,7 +115,7 @@ namespace Common.DataStructures
         #region Public Properties
 
         /// <summary>
-        /// Returns the <see cref="INode"/> with the highest priority but does not dequeue it.
+        /// Returns the <see cref="IAStarNode"/> with the highest priority but does not dequeue it.
         /// </summary>
         public AStarNode Peek
         {
