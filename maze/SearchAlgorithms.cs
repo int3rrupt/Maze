@@ -13,7 +13,7 @@ namespace Common.Algorithms
             int nodesChecked = 0;
             int movementCost = 10;
             PriorityQueue<AStarNode> open = new PriorityQueue<AStarNode>();
-            List<AStarNode> closed = new List<AStarNode>();
+            Dictionary<int, AStarNode> closed = new Dictionary<int, AStarNode>();
 
             // Enqueue start node
             open.Enqueue(NewAStarNode(graph.StartId, movementCost, graph));
@@ -23,7 +23,7 @@ namespace Common.Algorithms
             while (open.Peek != null && (currentNode = open.DequeueHighestPriority()).Key != graph.FinishId)
             {
                 nodesChecked++;
-                closed.Add(currentNode);
+                closed.Add(currentNode.Key, currentNode);
 
                 int x = graph.IdToX(currentNode.Key);
                 int y = graph.IdToY(currentNode.Key);
@@ -40,29 +40,28 @@ namespace Common.Algorithms
                     int neighborY = graph.IdToY(id);
 
                     int neighborOpenIndex = -1;
-                    int neighborClosedIndex = -1;
+                    AStarNode neighbor;
                     int cost = currentNode.G + movementCost;
 
                     if ((neighborOpenIndex = open.FindNodeIndexWithKey(id)) > -1 && cost < open.PeekAt(neighborOpenIndex).G)
                     {
-                        AStarNode neighbor = open.DequeueAt(neighborOpenIndex);
+                        neighbor = open.DequeueAt(neighborOpenIndex);
                         neighbor.G = cost;
                         neighbor.Value = neighbor.G + neighbor.H;
                         neighbor.Parent = currentNode;
                         open.Enqueue(neighbor);
                     }
-                    else if ((neighborClosedIndex = FindNodeIndexWithKey(id, closed)) > -1 && cost < closed[neighborClosedIndex].G)
+                    else if ((closed.TryGetValue(id, out neighbor)) && cost < neighbor.G)
                     //else if ((neighbor = closed.Find(n => n.Key == id)) != null && cost < neighbor.G)
                     {
-                        AStarNode neighbor = closed[neighborClosedIndex];
-                        closed.RemoveAt(neighborClosedIndex);
+                        closed.Remove(neighbor.Key);
                         //closed.Remove(neighbor);
                         neighbor.G = cost;
                         neighbor.Value = neighbor.G + neighbor.H;
                         neighbor.Parent = currentNode;
                         open.Enqueue(neighbor);
                     }
-                    else if (neighborOpenIndex == -1 && neighborClosedIndex == -1)
+                    else if (neighborOpenIndex == -1 && neighbor == null)
                     {
                         AStarNode newNode = NewAStarNode(id, movementCost, graph);
                         newNode.G = cost;

@@ -1,27 +1,16 @@
 ﻿using System;
-using System.IO;
+using System.Diagnostics;
 
 namespace Maze
 {
+    /// <summary>
+    /// Maze solving program
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
         {
-            DateTime startTime = DateTime.Now;
-            Console.WriteLine($"Start time: {startTime.ToString()}");
-            // DEBUG
-            if (args.Length == 0)
-                args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze3.png", $"C:\\Users\\reyes\\Downloads\\TestImages\\mazeSolution_{startTime.ToString("HH_mm_ss")}.png" };
-            //args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze3.png"};
-
-            //string output = string.Empty;
-            //if (args.Length == 1 || args.Length == 2)
-            //{
-            //    if (args.Length == 1)
-            //        output = $"{Path.GetDirectoryName(args[0])} {Path.GetFileNameWithoutExtension(args[0])}_{startTime.ToString("hh_mm_ss")}.{Path.GetExtension(args[0])}";
-            //}
-            //switch()
-
+            args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze2.png", @"C:\Users\reyes\Downloads\TestImages\maze2Solution2.png" };
             // Check user input
             if (args.Length != 2)
             {
@@ -29,10 +18,16 @@ namespace Maze
                 return;
             }
 
+            // Keep track of runtime
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            // Display start time to user
+            Console.WriteLine($"Start time: {DateTime.Now.ToString()}");
+
             // Initialization
             MazeController mazeController = new MazeController();
             bool success = mazeController.SolveMaze(args[0], args[1]);
-            TimeSpan duration = new TimeSpan(DateTime.Now.Ticks - startTime.Ticks);
+            stopwatch.Stop();
+            TimeSpan duration = stopwatch.Elapsed;
             // Try to solve the maze
             if (success)
                 Console.WriteLine($"Maze solved successfully!. Solution saved to: {args[1]}");
