@@ -16,29 +16,17 @@ namespace Common.Algorithms
             Dictionary<int, AStarNode> closed = new Dictionary<int, AStarNode>();
 
             // Enqueue start node
-            open.Enqueue(NewAStarNode(graph.StartId, movementCost, graph));
+            open.Enqueue(NewAStarNode(graph.GetIDFor(graph.StartLocationX, graph.StartLocationY), movementCost, graph));
 
             AStarNode currentNode = null;
             // Check for finish
-            while (open.Peek != null && (currentNode = open.DequeueHighestPriority()).Key != graph.FinishId)
+            while (open.Peek != null && (currentNode = open.DequeueHighestPriority()).Key != graph.FinishLocationID)
             {
-                nodesChecked++;
+                // Add current node to closed
                 closed.Add(currentNode.Key, currentNode);
-
-                int x = graph.IdToX(currentNode.Key);
-                int y = graph.IdToY(currentNode.Key);
-                int parentX, parentY;
-                if (currentNode.Parent != null)
-                {
-                    parentX = graph.IdToX(currentNode.Parent.Key);
-                    parentY = graph.IdToY(currentNode.Parent.Key);
-                }
-
+                // Iterate through all of current node's neighbors
                 foreach (int id in graph.GetNeighbors(currentNode.Key))
                 {
-                    int neighborX = graph.IdToX(id);
-                    int neighborY = graph.IdToY(id);
-
                     int neighborOpenIndex = -1;
                     AStarNode neighbor;
                     int cost = currentNode.G + movementCost;
@@ -94,12 +82,13 @@ namespace Common.Algorithms
 
         }
 
-        private static int H(int nodeId, int movementCost, MazeGraph graph)
+        private static int H(int nodeID, int movementCost, MazeGraph graph)
         {
             // Check if exists
-            if (graph.GetNeighbors(nodeId) != null)
+            if (graph.GetNeighbors(nodeID) != null)
             {
-                return (Math.Abs(graph.IdToX(nodeId) - graph.FinishLocationX) + Math.Abs(graph.IdToY(nodeId) - graph.FinishLocationY)) * movementCost;
+                Tuple<int, int> xy = graph.GetXYFor(nodeID);
+                return (Math.Abs(xy.Item1 - graph.FinishLocationX) + Math.Abs(xy.Item2 - graph.FinishLocationY)) * movementCost;
             }
             return -1;
         }
@@ -112,15 +101,10 @@ namespace Common.Algorithms
         /// <returns></returns>
         private static int G(int nodeId, MazeGraph graph)
         {
-            // Check if exists
-            if (graph.GetNeighbors(nodeId) != null)
-            {
-                if (nodeId == graph.StartId)
-                    return 0;
-                //return Math.Abs(graph.IdToX(nodeId) - graph.FinishLocationX) + Math.Abs(graph.IdToY(nodeId) - graph.FinishLocationY);
-                return G(nodeId, graph);
-            }
-            return -1;
+            if (nodeId == graph.StartLocationID)
+                return 0;
+            //return Math.Abs(graph.IdToX(nodeId) - graph.FinishLocationX) + Math.Abs(graph.IdToY(nodeId) - graph.FinishLocationY);
+            return G(nodeId, graph);
         }
 
         private static int F (int nodeId, int movementCost, MazeGraph graph)

@@ -7,8 +7,8 @@
     {
         Start,
         Finish,
+        SolutionPath,
         Path,
-        Floor,
         Wall
     }
 }

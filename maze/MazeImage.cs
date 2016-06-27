@@ -59,13 +59,13 @@ namespace Maze
             BitmapArr = bitmapArray;
             StartColor = startColor;
             FinishColor = finishColor;
-            PathColor = pathColor;
+            SolutionPathColor = pathColor;
             FloorColor = floorColor;
             WallColor = wallColor;
 
             StartColorArgb = StartColor.ToArgb();
             FinishColorArgb = FinishColor.ToArgb();
-            PathColorArgb = PathColor.ToArgb();
+            SolutionPathColorArgb = SolutionPathColor.ToArgb();
             FloorColorArgb = FloorColor.ToArgb();
             WallColorArgb = WallColor.ToArgb();
         }
@@ -79,11 +79,11 @@ namespace Maze
             if (argbKey == FinishColorArgb)
                 return MazeNodeType.Finish;
             if (argbKey == FloorColorArgb)
-                return MazeNodeType.Floor;
+                return MazeNodeType.Path;
             if (argbKey == WallColorArgb)
                 return MazeNodeType.Wall;
 
-            return MazeNodeType.Floor; ;
+            return MazeNodeType.Path; ;
         }
 
         public void DrawPath(AStarNode node)
@@ -93,7 +93,7 @@ namespace Maze
             {
                 int x = IndexToX(currentNode.Key);
                 int y = IndexToY(currentNode.Key);
-                BitmapArr.UpdateArgbAt(x, y, PathColor.A, PathColor.R, PathColor.G, PathColor.B);
+                BitmapArr.UpdateArgbAt(x, y, SolutionPathColor.A, SolutionPathColor.R, SolutionPathColor.G, SolutionPathColor.B);
                 currentNode = (AStarNode)currentNode.Parent;
             }
         }
@@ -133,8 +133,8 @@ namespace Maze
         /// <summary>
         /// The path color
         /// </summary>
-        public CustomColor PathColor { get; set; }
-        public int PathColorArgb { get; set; }
+        public CustomColor SolutionPathColor{ get; set; }
+        public int SolutionPathColorArgb { get; set; }
         /// <summary>
         /// The floor color
         /// </summary>

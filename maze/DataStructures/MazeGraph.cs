@@ -1,65 +1,119 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Common.DataStructures
 {
     public class MazeGraph
     {
-        public MazeGraph(Dictionary<int, List<int>> graphAsDictionary, int width, int startLocationX, int startLocationY, int finishLocationX, int finishLocationY)
+        public MazeGraph(byte[,] graphArray, int startLocationX, int startLocationY, int finishLocationX, int finishLocationY)
         {
             // Initialize values
-            Dictionary = graphAsDictionary;
-            Width = width;
+            Graph = graphArray;
             StartLocationX = startLocationX;
             StartLocationY = startLocationY;
+            StartLocationID = ID(StartLocationX, StartLocationY);
             FinishLocationX = finishLocationX;
             FinishLocationY = finishLocationY;
+            FinishLocationID = ID(FinishLocationX, FinishLocationY);
+            Width = Graph.GetLength(1);
+            Height = Graph.GetLength(0);
+            MaxID = ID(Width - 1, Height - 1);
+        }
+
+        public List<int> GetNeighbors(int nodeID)
+        {
+            int y = Y(nodeID);
+            if (IsValidID(nodeID))
+                return GetNeighbors(X(y, nodeID), y);
+            return null;
         }
 
         public List<int> GetNeighbors(int x, int y)
         {
-            return GetNeighbors(LocationToId(x, y));
-        }
+            List<int> neighbors = new List<int>();
+            // Verify point is within boundaries and not a wall
+            if (IsValidPoint(x, y))
+            {
+                // North
+                if (y - 1 >= 0 && Graph[y - 1, x] != 4)
+                    neighbors.Add(ID(x, y - 1));
+                // East
+                if (x + 1 < Width && Graph[y, x + 1] != 4)
+                    neighbors.Add(ID(x + 1, y));
+                // South
+                if (y + 1 < Height && Graph[y + 1, x] != 4)
+                    neighbors.Add(ID(x, y + 1));
+                // West
+                if (x - 1 >= 0 && Graph[y, x - 1] != 4)
+                    neighbors.Add(ID(x - 1, y));
 
-        public List<int> GetNeighbors(int nodeId)
-        {
-            List<int> value;
-            if (Dictionary.TryGetValue(nodeId, out value))
-                return value;
+                return neighbors;
+            }
             return null;
         }
 
-        public bool NodeExists(int nodeId)
+        public int GetIDFor(int x, int y)
         {
-            List<int> temp;
-            if (Dictionary.TryGetValue(nodeId, out temp))
+            if (IsValidPoint(x, y))
+            {
+                return ID(x, y);
+            }
+            return -1;
+        }
+
+        public Tuple<int, int> GetXYFor(int nodeID)
+        {
+            if (IsValidID(nodeID))
+            {
+                int y = Y(nodeID);
+                return new Tuple<int, int>(X(y, nodeID), y);
+            }
+            return null;
+        }
+
+        private bool IsValidPoint(int x, int y)
+        {
+            // Verify point is within boundaries and not a wall
+            if ((x >= 0 && x < Graph.GetLength(1) && y >= 0 && y < Graph.GetLength(0)) &&
+                Graph[y, x] != 4)
                 return true;
+
             return false;
         }
 
-        public int IdToX(int nodeId)
+        private bool IsValidID(int nodeID)
         {
-            return nodeId - Width * (nodeId / Width);
+            if (nodeID >= 0 && nodeID <= MaxID)
+                return true;
+
+            return false;
         }
 
-        public int IdToY(int nodeId)
+        private int ID(int x, int y)
         {
-            return nodeId / Width;
+            return x + (y * Graph.GetLength(1));
         }
 
-        public int LocationToId(int x, int y)
+        private int Y(int nodeID)
         {
-            return x + (Width * y);
+            return nodeID / Width;
+        }
+
+        private int X(int y, int nodeID)
+        {
+            return nodeID - (y * Width);
         }
 
         public int StartLocationX { get; set; }
         public int StartLocationY { get; set; }
-        public int StartId { get { return LocationToId(StartLocationX, StartLocationY); } }
+        public int StartLocationID { get; set; }
         public int FinishLocationX { get; set; }
         public int FinishLocationY { get; set; }
-        public int FinishId { get { return LocationToId(FinishLocationX, FinishLocationY); } }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int FinishLocationID { get; set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
 
-        private Dictionary<int, List<int>> Dictionary { get; set; }
+        private byte[,] Graph { get; set; }
+        private int MaxID { get; set; }
     }
 }

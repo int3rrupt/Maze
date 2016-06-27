@@ -19,10 +19,17 @@ namespace Common.DataStructures
 
         #region Public Properties
 
+        /// <summary>
+        /// The node's ID
+        /// </summary>
         public int Key { get; set; }
-
+        /// <summary>
+        /// The node's priority
+        /// </summary>
         public int Value { get; set; }
-
+        /// <summary>
+        /// The node's parent
+        /// </summary>
         public INode Parent { get; set; }
 
         public int G { get; set; }

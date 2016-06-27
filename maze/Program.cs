@@ -10,7 +10,7 @@ namespace Maze
     {
         static void Main(string[] args)
         {
-            args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze2.png", @"C:\Users\reyes\Downloads\TestImages\maze2Solution2.png" };
+            //args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze2.png", @"C:\Users\reyes\Downloads\TestImages\maze2Solution2.png" };
             // Check user input
             if (args.Length != 2)
             {
@@ -26,6 +26,7 @@ namespace Maze
             // Initialization
             MazeController mazeController = new MazeController();
             bool success = mazeController.SolveMaze(args[0], args[1]);
+            mazeController = null;
             stopwatch.Stop();
             TimeSpan duration = stopwatch.Elapsed;
             // Try to solve the maze
