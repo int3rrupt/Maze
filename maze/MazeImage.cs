@@ -86,15 +86,15 @@ namespace Maze
             return MazeNodeType.Path; ;
         }
 
-        public void DrawPath(AStarNode node)
+        public void DrawPath(Node node)
         {
-            AStarNode currentNode = node;
+            Node currentNode = node;
             while (currentNode != null)
             {
-                int x = IndexToX(currentNode.Key);
-                int y = IndexToY(currentNode.Key);
+                int x = IndexToX(currentNode.ID);
+                int y = IndexToY(currentNode.ID);
                 BitmapArr.UpdateArgbAt(x, y, SolutionPathColor.A, SolutionPathColor.R, SolutionPathColor.G, SolutionPathColor.B);
-                currentNode = (AStarNode)currentNode.Parent;
+                currentNode = (Node)currentNode.Parent;
             }
         }
 

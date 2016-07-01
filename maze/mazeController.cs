@@ -39,13 +39,13 @@ namespace Maze
             MazeGraph graph = GraphGenerator.CreateGraphFrom(mazeImage);
             bitmapArray = null;
             // Attempt to solve the maze
-            AStarNode mazeSolution = MazeSolver.SolveMaze<AStarNode>(graph);
+            Node mazeSolution = MazeSolver.SolveMaze<Node>(graph);
             // Draw path on image
             mazeImage.DrawPath(mazeSolution);
             // Write solution to image
             ImageHelper.WriteToImage(mazeImage, solutionPath);
             // Determine if solution was found
-            bool result = mazeSolution.Key == graph.FinishLocationID;
+            bool result = mazeSolution.ID == graph.FinishLocationID;
             mazeImage = null;
             graph = null;
             mazeSolution = null;

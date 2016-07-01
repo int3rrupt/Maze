@@ -4,6 +4,6 @@
     {
         int G { get; set; }
 
-        int H { get; set; }
+        //int H { get; set; }
     }
 }

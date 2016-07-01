@@ -7,7 +7,7 @@ namespace Common.DataStructures
     /// A Generic Binary Min Heap Class.
     /// </summary>
     /// <typeparam name="T">A <see cref="T"/>, the type used for keys and values.</typeparam>
-    public class BinaryHeap<TNode> where TNode : IAStarNode
+    public abstract class BinaryHeap
     {
         #region Constructors
 
@@ -16,7 +16,7 @@ namespace Common.DataStructures
         /// </summary>
         public BinaryHeap()
         {
-            NodeList = new List<IAStarNode>();
+            PriorityList = new List<int>();
         }
 
         #endregion
@@ -26,27 +26,27 @@ namespace Common.DataStructures
         /// <summary>
         /// Inserts the given node into the heap.
         /// </summary>
-        /// <param name="node">A <see cref="IAStarNode"/>, the node to be added to the heap.</param>
-        public void Insert(IAStarNode node)
+        /// <param name="node">A <see cref="INode"/>, the node to be added to the heap.</param>
+        public int Insert(int priority)
         {
             // Append to end of heap
-            NodeList.Add(node);
+            PriorityList.Add(priority);
             // Percolate new value up
-            PercolateUp();
+            return PercolateUp();
         }
 
         /// <summary>
-        /// Extracts the <see cref="IAStarNode"/> with the lowest Value.
+        /// Extracts the <see cref="INode"/> with the lowest Value.
         /// </summary>
-        /// <returns>A <see cref="IAStarNode"/>, the node with the lowest value.</returns>
-        public IAStarNode ExtractRoot()
+        /// <returns>A <see cref="INode"/>, the node with the lowest value.</returns>
+        public int ExtractRoot()
         {
-            IAStarNode minValue = null;
+            int minValue = -1;
             // Check for empty heap
-            if (NodeList.Count > 0)
+            if (PriorityList.Count > 0)
             {
                 // Store min value before removing
-                minValue = NodeList[0];
+                minValue = PriorityList[0];
                 // Replace the root with last item in heap
                 Replace(0);
                 // Percolate new root downward to satisfy heap property
@@ -61,24 +61,22 @@ namespace Common.DataStructures
 
         /// <summary>
         /// Percolates the last item in the heap upward until the heap property is satisfied.
+        /// NOTE: make single percolate up so that can override in priority queue and determine index changes
         /// </summary>
-        internal int PercolateUp()
+        protected int PercolateUp()
         {
             // Grab last item in heap
-            int currentIndex = NodeList.Count - 1;
+            int currentIndex = PriorityList.Count - 1;
             int parentIndex = IndexOfParentFor(currentIndex);
             // While current value is less than its parent value
             // OR
             // current value == parent value AND current H greater than parent H
             while (parentIndex > -1 &&
-                  (NodeList[currentIndex].Value < NodeList[parentIndex].Value ||
-                  (NodeList[currentIndex].Value == NodeList[parentIndex].Value &&
-                   NodeList[currentIndex].H < NodeList[parentIndex].H)))
+                  (PriorityList[currentIndex] < PriorityList[parentIndex])) //||
+                  //(NodeList[currentIndex].Value == NodeList[parentIndex].Value &&
+                   //NodeList[currentIndex].H < NodeList[parentIndex].H)))
             {
-                // Swap current with its parent
-                IAStarNode currentItem = NodeList[currentIndex];
-                NodeList[currentIndex] = NodeList[parentIndex];
-                NodeList[parentIndex] = currentItem;
+                Swap(currentIndex, parentIndex);
                 // Update indexes
                 currentIndex = parentIndex;
                 parentIndex = IndexOfParentFor(currentIndex);
@@ -86,10 +84,18 @@ namespace Common.DataStructures
             return currentIndex;
         }
 
+        protected virtual void Swap(int index1, int index2)
+        {
+            // Swap priority values of two items
+            int currentItemPriority = PriorityList[index1];
+            PriorityList[index1] = PriorityList[index2];
+            PriorityList[index2] = currentItemPriority;
+        }
+
         /// <summary>
         /// Percolates the node at the given index in the heap downward until the heap property is satisfied.
         /// </summary>
-        internal int PercolateDown(int index)
+        protected int PercolateDown(int index)
         {
             // Set current index as root
             int currentIndex = index;
@@ -97,27 +103,27 @@ namespace Common.DataStructures
             int rightChildIndex = IndexOfRightChildFor(currentIndex);
             // While current value is greater than any of its child values
             while ( (leftChildIndex > 0 &&
-                    (NodeList[currentIndex].Value > NodeList[leftChildIndex].Value ||
-                    (NodeList[currentIndex].Value == NodeList[leftChildIndex].Value &&
-                     NodeList[currentIndex].H > NodeList[leftChildIndex].Value))) ||
+                    (PriorityList[currentIndex] > PriorityList[leftChildIndex] //||
+                    //(NodeList[currentIndex].Value == NodeList[leftChildIndex].Value &&
+                    // NodeList[currentIndex].H > NodeList[leftChildIndex].Value)))
+                    ))
+                     ||
                     (rightChildIndex > 0 &&
-                    (NodeList[currentIndex].Value > NodeList[rightChildIndex].Value ||
-                    (NodeList[currentIndex].Value == NodeList[rightChildIndex].Value &&
-                     NodeList[currentIndex].H > NodeList[rightChildIndex].H))))
+                    (PriorityList[currentIndex] > PriorityList[rightChildIndex] //||
+                    //(NodeList[currentIndex].Value == NodeList[rightChildIndex].Value &&
+                    // NodeList[currentIndex].H > NodeList[rightChildIndex].H))))
+                    )))
             {
-                IAStarNode currentItem = NodeList[currentIndex];
                 // Swap current with its lowest valued child
-                if (rightChildIndex < 1 || NodeList[leftChildIndex].Value < NodeList[rightChildIndex].Value)
+                if (rightChildIndex <= 0 || PriorityList[leftChildIndex] < PriorityList[rightChildIndex])
                 {
-                    NodeList[currentIndex] = NodeList[leftChildIndex];
-                    NodeList[leftChildIndex] = currentItem;
+                    Swap(currentIndex, leftChildIndex);
                     // Update current index
                     currentIndex = leftChildIndex;
                 }
                 else
                 {
-                    NodeList[currentIndex] = NodeList[rightChildIndex];
-                    NodeList[rightChildIndex] = currentItem;
+                    Swap(currentIndex, rightChildIndex);
                     // Update current index
                     currentIndex = rightChildIndex;
                 }
@@ -131,14 +137,14 @@ namespace Common.DataStructures
         /// <summary>
         /// Replaces the node at the given index of the heap with the last item in the heap.
         /// </summary>
-        internal void Replace(int index)
+        protected virtual void Replace(int index)
         {
             // Get last item
-            IAStarNode lastItem = NodeList[NodeList.Count - 1];
+            int lastItem = PriorityList[PriorityList.Count - 1];
             // Write last item to given index
-            NodeList[index] = lastItem;
+            PriorityList[index] = lastItem;
             // Remove last item
-            NodeList.RemoveAt(NodeList.Count - 1);
+            PriorityList.RemoveAt(PriorityList.Count - 1);
         }
 
         /// <summary>
@@ -146,12 +152,12 @@ namespace Common.DataStructures
         /// </summary>
         /// <param name="parentIndex">An <see cref="int"/>, the parent's index used to find the index of its left child.</param>
         /// <returns>An <see cref="int"/>, the index of the given parent's left child. Returns -1 when no left child exists for the given parent index.</returns>
-        internal int IndexOfLeftChildFor(int parentIndex)
+        protected int IndexOfLeftChildFor(int parentIndex)
         {
             // Find potential left child index
             int index = (2 * parentIndex) + 1;
             // Verify index not greater than size of heap
-            if (index >= NodeList.Count)
+            if (index >= PriorityList.Count)
                 index = -1;
             return index;
         }
@@ -161,13 +167,13 @@ namespace Common.DataStructures
         /// </summary>
         /// <param name="parentIndex">An <see cref="int"/>, the parent's index used to find the index of its right child.</param>
         /// <returns>An <see cref="int"/>, the index of the given parent's right child. Returns -1 when no right child exists for the given parent index.</returns>
-        internal int IndexOfRightChildFor(int parentIndex)
+        protected int IndexOfRightChildFor(int parentIndex)
         {
             int index;
             // Find left child index
             int leftChildIndex = IndexOfLeftChildFor(parentIndex);
             // Verify left child exists and that right child index not greater than size of heap
-            if (leftChildIndex < 1 || leftChildIndex + 1 >= NodeList.Count)
+            if (leftChildIndex < 1 || leftChildIndex + 1 >= PriorityList.Count)
                 index = -1;
             else
                 index = leftChildIndex + 1;
@@ -179,7 +185,7 @@ namespace Common.DataStructures
         /// </summary>
         /// <param name="childIndex">An <see cref="int"/>, the index of the child who's parent is to be found.</param>
         /// <returns>An <see cref="int"/>, the index of the parent to the child at the given index. Returns -1 when no parent exists for the given child index.</returns>
-        internal int IndexOfParentFor(int childIndex)
+        protected int IndexOfParentFor(int childIndex)
         {
             int index;
             // Verify given child index isn't root of heap
@@ -199,27 +205,26 @@ namespace Common.DataStructures
         #region Public Properties
 
         /// <summary>
-        /// Returns the <see cref="IAStarNode"/> with the lowest value but does not remove it from the heap.
+        /// Returns the <see cref="INode"/> with the lowest value but does not remove it from the heap.
         /// </summary>
-        public IAStarNode Peek
-        {
-            get
-            {
-                // TODO: Fix this, user could potentially update node's values
-                if (NodeList.Count > 0)
-                    return NodeList[0];
-                return null;
-            }
-        }
+        //public virtual int Peek
+        //{
+        //    get
+        //    {
+        //        // TODO: Fix this, user could potentially update node's values
+        //        if (PriorityList.Count > 0)
+        //            return PriorityList[0];
+        //        return -1;
+        //    }
+        //}
 
         #endregion
 
         #region Internal Properties
 
-        /// <summary>
-        /// A <see cref="List{T}"/> of <see cref="IAStarNode{T}"/> used to represent the heap.
-        /// </summary>
-        internal List<IAStarNode> NodeList { get; set; }
+        
+
+        protected List<int> PriorityList { get; set; }
 
         #endregion
     }

@@ -10,7 +10,7 @@ namespace Maze
     {
         static void Main(string[] args)
         {
-            //args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze2.png", @"C:\Users\reyes\Downloads\TestImages\maze2Solution2.png" };
+            args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze2.png", @"C:\Users\reyes\Downloads\TestImages\mazeDebugSolution.png" };
             // Check user input
             if (args.Length != 2)
             {

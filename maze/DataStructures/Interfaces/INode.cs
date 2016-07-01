@@ -6,13 +6,9 @@ namespace Common.DataStructures.Interfaces
     public interface INode
     {
         /// <summary>
-        /// The node key. An ID.
+        /// The node ID.
         /// </summary>
-        int Key { get; set; }
-        /// <summary>
-        /// The value of the node.
-        /// </summary>
-        int Value { get; set; }
+        int ID { get; set; }
         /// <summary>
         /// The parent to the node.
         /// </summary>

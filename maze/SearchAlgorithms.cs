@@ -2,60 +2,63 @@
 using Common.DataStructures.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Common.Algorithms
 {
     public static class SearchAlgorithms
     {
+        private static int MovementCost = 10;
+
         public static INode AStar(MazeGraph graph)
         {
-            int nodesChecked = 0;
-            int movementCost = 10;
-            PriorityQueue<AStarNode> open = new PriorityQueue<AStarNode>();
-            Dictionary<int, AStarNode> closed = new Dictionary<int, AStarNode>();
+            PriorityQueue<Node> open = new PriorityQueue<Node>();
+            Dictionary<int, Tuple<Node, int>> closed = new Dictionary<int, Tuple<Node, int>>();
 
             // Enqueue start node
-            open.Enqueue(NewAStarNode(graph.GetIDFor(graph.StartLocationX, graph.StartLocationY), movementCost, graph));
+            Node newNode = new Node();
+            int priority = H(graph.StartLocationID, graph);
+            newNode.ID = graph.StartLocationID;
+            newNode.G = 0;
+            open.Enqueue(priority, newNode);
 
-            AStarNode currentNode = null;
+            Node currentNode = null;
+
+            int reopenCount = 0;
             // Check for finish
-            while (open.Peek != null && (currentNode = open.DequeueHighestPriority()).Key != graph.FinishLocationID)
+            while (open.Peek != null && (currentNode = open.DequeueHighestPriority()).ID != graph.FinishLocationID)
             {
                 // Add current node to closed
-                closed.Add(currentNode.Key, currentNode);
+                closed.Add(currentNode.ID, new Tuple<Node, int>((Node)currentNode.Parent, currentNode.G));
                 // Iterate through all of current node's neighbors
-                foreach (int id in graph.GetNeighbors(currentNode.Key))
+                foreach (int id in graph.GetNeighbors(currentNode.ID))
                 {
-                    int neighborOpenIndex = -1;
-                    AStarNode neighbor;
-                    int cost = currentNode.G + movementCost;
+                    Node neighborInOpen;
+                    Tuple<Node, int> neighborInClosed;
+                    int newCost = currentNode.G + MovementCost;
 
-                    if ((neighborOpenIndex = open.FindNodeIndexWithKey(id)) > -1 && cost < open.PeekAt(neighborOpenIndex).G)
+                    if ((neighborInOpen = open.Exists(id)) != null && newCost < neighborInOpen.G)
                     {
-                        neighbor = open.DequeueAt(neighborOpenIndex);
-                        neighbor.G = cost;
-                        neighbor.Value = neighbor.G + neighbor.H;
-                        neighbor.Parent = currentNode;
-                        open.Enqueue(neighbor);
+                        neighborInOpen = open.Dequeue(neighborInOpen.ID);
+                        neighborInOpen.G = newCost;
+                        priority = newCost + H(neighborInOpen.ID, graph);
+                        neighborInOpen.Parent = currentNode;
+                        open.Enqueue(priority, neighborInOpen);
                     }
-                    else if ((closed.TryGetValue(id, out neighbor)) && cost < neighbor.G)
-                    //else if ((neighbor = closed.Find(n => n.Key == id)) != null && cost < neighbor.G)
+                    else if ((closed.TryGetValue(id, out neighborInClosed)) && newCost < neighborInClosed.Item2)
                     {
-                        closed.Remove(neighbor.Key);
-                        //closed.Remove(neighbor);
-                        neighbor.G = cost;
-                        neighbor.Value = neighbor.G + neighbor.H;
-                        neighbor.Parent = currentNode;
-                        open.Enqueue(neighbor);
+                        reopenCount++;
+                        closed.Remove(id);
+                        priority = newCost + H(id, graph);
+                        open.Enqueue(priority, new Node(id, neighborInClosed.Item1, newCost));
                     }
-                    else if (neighborOpenIndex == -1 && neighbor == null)
+                    else if (neighborInOpen == null && neighborInClosed == null)
                     {
-                        AStarNode newNode = NewAStarNode(id, movementCost, graph);
-                        newNode.G = cost;
-                        newNode.Value = newNode.G + newNode.H;
+                        newNode = new Node();
+                        newNode.ID = id;
+                        newNode.G = newCost;
+                        priority = newCost + H(newNode.ID, graph);
                         newNode.Parent = currentNode;
-                        open.Enqueue(newNode);
+                        open.Enqueue(priority, newNode);
                     }
                 }
             }
@@ -82,14 +85,13 @@ namespace Common.Algorithms
 
         }
 
-        private static int H(int nodeID, int movementCost, MazeGraph graph)
+        private static int H(int nodeID, MazeGraph graph)
         {
+            Tuple<int, int> xy = graph.GetXYFor(nodeID);
             // Check if exists
-            if (graph.GetNeighbors(nodeID) != null)
-            {
-                Tuple<int, int> xy = graph.GetXYFor(nodeID);
-                return (Math.Abs(xy.Item1 - graph.FinishLocationX) + Math.Abs(xy.Item2 - graph.FinishLocationY)) * movementCost;
-            }
+            if (xy != null)
+                return (Math.Abs(xy.Item1 - graph.FinishLocationX) + Math.Abs(xy.Item2 - graph.FinishLocationY)) * MovementCost;
+
             return -1;
         }
 
@@ -99,37 +101,21 @@ namespace Common.Algorithms
         /// <param name="nodeId"></param>
         /// <param name="graph"></param>
         /// <returns></returns>
-        private static int G(int nodeId, MazeGraph graph)
-        {
-            if (nodeId == graph.StartLocationID)
-                return 0;
-            //return Math.Abs(graph.IdToX(nodeId) - graph.FinishLocationX) + Math.Abs(graph.IdToY(nodeId) - graph.FinishLocationY);
-            return G(nodeId, graph);
-        }
+        //private static int G(INode node)
+        //{
+        //    if (node != null)
+        //    {
+        //        if (node.Parent == null)
+        //            return 0;
+        //        //return Math.Abs(graph.IdToX(nodeId) - graph.FinishLocationX) + Math.Abs(graph.IdToY(nodeId) - graph.FinishLocationY);
+        //        return G(node.Parent) + MovementCost;
+        //    }
+        //    return -1;
+        //}
 
-        private static int F (int nodeId, int movementCost, MazeGraph graph)
-        {
-            return G(nodeId, graph) + H(nodeId, movementCost, graph);
-        }
-
-        private static AStarNode NewAStarNode(int id, int movementCost, MazeGraph graph)
-        {
-            int g = 0;
-            int h = H(id, movementCost, graph);
-            int f = g + h;
-
-            return new AStarNode(id, f, g, h, null);
-        }
-
-        private static int FindNodeIndexWithKey(int key, List<AStarNode> list)
-        {
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].Key == key)
-                    return i;
-            }
-
-            return -1;
-        }
+        //private static int F (int nodeId, int movementCost, MazeGraph graph)
+        //{
+        //    return G(nodeId, graph) + H(nodeId, movementCost, graph);
+        //}
     }
 }

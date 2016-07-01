@@ -33,7 +33,7 @@ namespace Maze
         /// <returns></returns>
         public static TNode SolveMaze<TNode>(MazeGraph graph) where TNode : INode
         {
-            if (typeof(TNode) == typeof(AStarNode))
+            if (typeof(TNode) == typeof(Node))
                 return (TNode)SearchAlgorithms.AStar(graph);
 
             return default(TNode);

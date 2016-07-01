@@ -9,14 +9,15 @@ namespace Common.DataStructures
         {
             // Initialize values
             Graph = graphArray;
+            Width = Graph.GetLength(1);
+            Height = Graph.GetLength(0);
             StartLocationX = startLocationX;
             StartLocationY = startLocationY;
             StartLocationID = ID(StartLocationX, StartLocationY);
             FinishLocationX = finishLocationX;
             FinishLocationY = finishLocationY;
             FinishLocationID = ID(FinishLocationX, FinishLocationY);
-            Width = Graph.GetLength(1);
-            Height = Graph.GetLength(0);
+            
             MaxID = ID(Width - 1, Height - 1);
         }
 
@@ -74,7 +75,7 @@ namespace Common.DataStructures
         private bool IsValidPoint(int x, int y)
         {
             // Verify point is within boundaries and not a wall
-            if ((x >= 0 && x < Graph.GetLength(1) && y >= 0 && y < Graph.GetLength(0)) &&
+            if ((x >= 0 && x < Width && y >= 0 && y < Height) &&
                 Graph[y, x] != 4)
                 return true;
 
@@ -91,7 +92,7 @@ namespace Common.DataStructures
 
         private int ID(int x, int y)
         {
-            return x + (y * Graph.GetLength(1));
+            return x + (y * Width);
         }
 
         private int Y(int nodeID)

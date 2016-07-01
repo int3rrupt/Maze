@@ -6,12 +6,15 @@ namespace Common.DataStructures
     {
         #region Constructor
 
-        public AStarNode(int key, int value, int g, int h, AStarNode parent)
+        public AStarNode()
         {
-            Key = key;
-            Value = value;
+        }
+
+        public AStarNode(int key, int g, int h, AStarNode parent)
+        {
+            ID = key;
             G = g;
-            H = h;
+            //H = h;
             Parent = parent;
         }
 
@@ -22,7 +25,7 @@ namespace Common.DataStructures
         /// <summary>
         /// The node's ID
         /// </summary>
-        public int Key { get; set; }
+        public int ID { get; set; }
         /// <summary>
         /// The node's priority
         /// </summary>
@@ -34,7 +37,7 @@ namespace Common.DataStructures
 
         public int G { get; set; }
 
-        public int H { get; set; }
+        //public int H { get; set; }
 
         #endregion
     }
