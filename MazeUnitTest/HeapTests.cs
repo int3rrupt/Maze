@@ -1,5 +1,4 @@
-﻿using Common.DataStructures;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DataStructuresUnitTests
 {

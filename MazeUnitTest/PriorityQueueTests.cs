@@ -1,4 +1,4 @@
-﻿//using Common.DataStructures;
+﻿//using Common.DataTypes;
 //using Microsoft.VisualStudio.TestTools.UnitTesting;
 //using System;
 //using System.Collections.Generic;
@@ -12,7 +12,7 @@
 //    public class PriorityQueueTests
 //    {
 //        #region Declarations
-        
+
 //        // In Order
 //        private static int[] small_InOrder_InputData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 //        // Reverse Order
@@ -35,11 +35,11 @@
 //        [TestMethod]
 //        public void EnqueueDequeue_SingleIntoEmptyQueue()
 //        {
-//            PriorityQueue<AStarNode> queue = new PriorityQueue<AStarNode>();
+//            PriorityQueue<Node> queue = new PriorityQueue<Node>();
 //            // Insert single item into empty heap
-//            queue.Enqueue(new AStarNode(0, 0, 0, 0, null));
+//            queue.Enqueue(0, new Node(0, null, 0));
 //            // Verify what was inserted
-//            Assert.IsTrue(queue.DequeueHighestPriority().Value == 0);
+//            Assert.IsTrue(queue.DequeueHighestPriority().ID == 0);
 //        }
 
 //        /// <summary>
@@ -88,7 +88,7 @@
 //        [TestMethod]
 //        public void Dequeue_FromEmptyQueue()
 //        {
-//            PriorityQueue<AStarNode> queue = new PriorityQueue<AStarNode>();
+//            PriorityQueue<Node> queue = new PriorityQueue<Node>();
 //            Assert.IsNull(queue.DequeueHighestPriority());
 //        }
 
@@ -101,13 +101,13 @@
 //            int[] inputData = { 391, 413, 3423, 2332, 14, 756, 34, 2, 5, 1, 65632, 1, 4535, 231, 34134, 31, 131, 13, 413, 76, 234, 84, 134, 87123, 5463, 4867, 234, 1, 5, 7, 2, 0, 1, 12, 532 };
 //            int[] sortedInput = { 0, 1, 1, 1, 1, 2, 2, 5, 5, 7, 12, 13, 14, 31, 34, 76, 84, 131, 134, 231, 234, 234, 391, 413, 413, 532, 756, 2332, 3423, 4535, 4867, 5463, 34134, 65632, 87123 };
 //            // Populate heap
-//            PriorityQueue<AStarNode> heap = CreateQueue(inputData);
+//            PriorityQueue<Node> heap = CreateQueue(inputData);
 //            // Peek
-//            AStarNode node = (AStarNode)heap.Peek;
+//            Node node = (Node)heap.Peek;
 //            // Verify not null
 //            Assert.IsNotNull(node);
 //            // Verify input against expected result
-//            Assert.IsTrue(node.Value == sortedInput[0]);
+//            Assert.IsTrue(node.ID == sortedInput[0]);
 //        }
 
 //        /// <summary>
@@ -117,13 +117,13 @@
 //        public void Dequeue_KeyFromQueue()
 //        {
 //            // Create new queue using medium out of order data
-//            PriorityQueue<AStarNode> queue = CreateQueue(medium_OutOfOrder_InputData);
+//            PriorityQueue<Node> queue = CreateQueue(medium_OutOfOrder_InputData);
 //            // Randomly choose a node ID, where node ID is the index of the array
 //            int nodeId = new Random().Next(0, medium_OutOfOrder_InputData.Length);
 //            // Get corresponding value
 //            int nodePriority = medium_OutOfOrder_InputData[nodeId];
 //            // Attempt to dequeue node where key equals the randomly selected node ID
-//            AStarNode node = queue.Dequeue(nodeId);
+//            Node node = queue.Dequeue(nodeId);
 //            // Verify node was found
 //            Assert.IsNotNull(node);
 //            // Verify node ID and value (priority)

@@ -1,8 +1,8 @@
-﻿using Common.DataStructures;
+﻿using Common.DataTypes;
 using Common.Imaging;
 using Maze;
+using Maze.DataTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 
 namespace MazeUnitTest
 {

@@ -10,31 +10,43 @@ namespace Maze
     {
         static void Main(string[] args)
         {
-            args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze2.png", @"C:\Users\reyes\Downloads\TestImages\mazeDebugSolution.png" };
-            // Check user input
-            if (args.Length != 2)
-            {
-                Console.WriteLine($"{Resources.Error_MissingArguments}\nEx: {Resources.ArgumentsFormat}");
-                return;
-            }
+            // Degugging
+            //args = new string[] { @"C:\Users\reyes\Downloads\TestImages\maze1.png", @"C:\Users\reyes\Downloads\TestImages\mazeDebugSolution.png" };
 
-            // Keep track of runtime
-            Stopwatch stopwatch = Stopwatch.StartNew();
             // Display start time to user
-            Console.WriteLine($"Start time: {DateTime.Now.ToString()}");
+            Console.WriteLine($"Start time: {DateTime.Now.ToString()}\n");
 
-            // Initialization
-            MazeController mazeController = new MazeController();
-            bool success = mazeController.SolveMaze(args[0], args[1]);
-            mazeController = null;
-            stopwatch.Stop();
-            TimeSpan duration = stopwatch.Elapsed;
-            // Try to solve the maze
-            if (success)
-                Console.WriteLine($"Maze solved successfully!. Solution saved to: {args[1]}");
-            else
-                Console.WriteLine("Maze could not be sovled.");
-            Console.WriteLine($"Runtime: {duration}");
+            string message = string.Empty;
+            try
+            {
+                // Check user input
+                if (args.Length != 2)
+                {
+                    message = $"{Resources.Error_MissingArguments}\nEx: {Resources.ArgumentsFormat}\n";
+                }
+                else
+                {
+                    // Keep track of runtime
+                    Stopwatch stopwatch = Stopwatch.StartNew();
+                    // Initialization
+                    MazeController mazeController = new MazeController();
+                    // Try to solve the maze
+                    bool success = mazeController.SolveMaze(args[0], args[1]);
+                    // Determine runtime
+                    stopwatch.Stop();
+                    TimeSpan duration = stopwatch.Elapsed;
+                    // Append success or failure message
+                    message += success ? $"Maze solved successfully!. Solution saved to: {args[1]}\n" : "Maze could not be sovled.\n";
+                    // Append runtime message
+                    message += $"Runtime: {duration}\n";
+                }
+            }
+            catch (Exception ex)
+            {
+                message += $"An error has occurred:\n{ex.Message}\n";
+            }
+            // Write any messages
+            Console.WriteLine(message);
             Console.WriteLine("Press any key to exit.");
             Console.Read();
         }

@@ -1,6 +1,6 @@
-﻿using Common.DataStructures;
+﻿using Common.DataTypes;
 using Common.Imaging;
-using System.Drawing;
+using Maze.DataTypes;
 
 namespace Maze
 {
@@ -9,13 +9,9 @@ namespace Maze
         #region Constructor
 
         /// <summary>
-        /// Creates a new Maze Controller class using default values.
+        /// Creates a new Maze Controller class.
         /// </summary>
         public MazeController()
-        {
-        }
-
-        public MazeController(string imagePath, Color startColor, Color finishColor, Color path, Color floor, Color wall)
         {
         }
 
@@ -24,7 +20,7 @@ namespace Maze
         #region Public Methods
 
         /// <summary>
-        /// Solves the given maze image using default maze properties.
+        /// Solves the given maze image.
         /// Outputs a copy of the image with the computed solution.
         /// </summary>
         /// <param name="imagePath">A <see cref="string"/>, the path to the maze image.</param>
@@ -37,22 +33,27 @@ namespace Maze
             MazeImage mazeImage = new MazeImage(bitmapArray);
             // Generate graph from image
             MazeGraph graph = GraphGenerator.CreateGraphFrom(mazeImage);
-            bitmapArray = null;
             // Attempt to solve the maze
-            Node mazeSolution = MazeSolver.SolveMaze<Node>(graph);
+            MazeSolution mazeSolution = MazeSolver.SolveMaze<Node>(graph);
             // Draw path on image
-            mazeImage.DrawPath(mazeSolution);
+            mazeImage.DrawSolutionPath(mazeSolution);
             // Write solution to image
             ImageHelper.WriteToImage(mazeImage, solutionPath);
             // Determine if solution was found
-            bool result = mazeSolution.ID == graph.FinishLocationID;
-            mazeImage = null;
-            graph = null;
-            mazeSolution = null;
-            return result;
+            return mazeSolution.Result;
         }
 
         #endregion
+
+        private MazeGraph ImageToGraph(string imagePath)
+        {
+            // Generate bitmap array from image
+            BitmapArray bitmapArray = ImageHelper.ImageToBitmapArray(imagePath);
+            // Create new maze image object
+            MazeImage mazeImage = new MazeImage(bitmapArray);
+            // Generate graph from image
+            return GraphGenerator.CreateGraphFrom(mazeImage);
+        }
 
         
     }

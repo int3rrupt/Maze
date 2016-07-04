@@ -21,8 +21,14 @@ namespace Maze.Exceptions
         /// </summary>
         /// <param name="imageName">A <see cref="string"/>, the name of the image that caused the exception</param>
         /// <param name="pixelFormat">A <see cref="string"/>, the PixelFormat of the image.</param>
+        public UnsupportedImageFormatException(string imageName)
+            : base(string.Format(ExceptionMessages.UnsupportedImageFormatExceptionMessage1, imageName))
+        {
+            ImagePath = imageName;
+        }
+
         public UnsupportedImageFormatException(string imageName, string pixelFormat)
-            : base(ExceptionMessages.UnsupportedImageFormatExceptionMessage)
+            : base(string.Format(ExceptionMessages.UnsupportedImageFormatExceptionMessage2, imageName, pixelFormat))
         {
             ImagePath = imageName;
             PixelFormat = pixelFormat;

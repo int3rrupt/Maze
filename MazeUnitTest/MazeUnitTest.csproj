@@ -61,6 +61,13 @@
       <Name>Maze</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="MazeImages\maze1.png" />
+    <Content Include="MazeImages\maze2.png" />
+    <Content Include="MazeImages\maze3.png" />
+    <Content Include="MazeImages\maze4.png" />
+    <Content Include="MazeImages\maze5.png" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

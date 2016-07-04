@@ -70,11 +70,20 @@ namespace Maze.Exceptions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Image [{0}] uses an unsupported format [{1}]..
+        ///   Looks up a localized string similar to Image [{0}] uses an unsupported format..
         /// </summary>
-        internal static string UnsupportedImageFormatExceptionMessage {
+        internal static string UnsupportedImageFormatExceptionMessage1 {
             get {
-                return ResourceManager.GetString("UnsupportedImageFormatExceptionMessage", resourceCulture);
+                return ResourceManager.GetString("UnsupportedImageFormatExceptionMessage1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image [{0}] uses an unsupported format: [{1}]..
+        /// </summary>
+        internal static string UnsupportedImageFormatExceptionMessage2 {
+            get {
+                return ResourceManager.GetString("UnsupportedImageFormatExceptionMessage2", resourceCulture);
             }
         }
     }
